@@ -322,7 +322,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
     if(title)title.textContent=mode==='signup'?'إنشاء حساب في ميثاق':mode==='login'?'تسجيل الدخول إلى ميثاق':mode==='recovery'?'تعيين كلمة مرور جديدة':'استعادة كلمة المرور';
     switcher.textContent=mode==='signup'?'لديك حساب بالفعل؟ تسجيل الدخول':'العودة إلى إنشاء حساب جديد';
     switcher.style.display=['reset','recovery'].includes(mode)?'none':'block';
-    reset.style.display=mode==='login'&&!phone?'block':'none';
+    reset.style.display=!phone&&!['reset','recovery'].includes(mode)?'block':'none';
     if(method?.closest('.field'))method.closest('.field').hidden=['reset','recovery'].includes(mode);
     if(emailField)emailField.hidden=phone||mode==='recovery';
     if(phoneField)phoneField.hidden=!phone;
