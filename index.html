@@ -70,6 +70,21 @@ section{scroll-margin-top:90px}
 .matchmaker-person:nth-child(2)::before{background-image:linear-gradient(180deg,#173f3110,#173f3140),url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=80')}
 .matchmaker-person:nth-child(3)::before{background-image:linear-gradient(180deg,#173f3110,#173f3140),url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=900&q=80')}
 @media(max-width:760px){.matchmaker-person::before{height:155px}}
+
+/* MITHAQ full admin workspace */
+.admin-workspace-nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px;margin:16px 0 20px;border:1px solid var(--line);border-radius:18px;background:var(--surface);position:sticky;top:8px;z-index:8;box-shadow:0 8px 24px #173f310c}
+.admin-workspace-nav button{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700}
+.admin-workspace-nav button[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
+.admin-workspace-nav button[hidden],.admin-module[hidden]{display:none!important}
+.admin-module{min-width:0;animation:adminFade .18s ease}
+.admin-module-intro{padding:16px 18px;border:1px solid var(--line);border-radius:17px;background:var(--surface);margin:0 0 16px}
+.admin-module-intro b{display:block;font-size:15px;margin-bottom:5px}
+.admin-module-intro p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.admin-quick-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.admin-quick-links button{border:1px solid var(--line);border-radius:15px;padding:14px;background:var(--surface);color:var(--ink);text-align:right;font-weight:700}
+.admin-quick-links button span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:5px;line-height:1.6}
+@keyframes adminFade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.admin-workspace-nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.admin-workspace-nav button{min-height:44px}.admin-quick-links{grid-template-columns:1fr}}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -698,6 +713,55 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
   const id=button.dataset.page;
   button.setAttribute('onclick',"return window.mithaqOpenPage('"+id+"')");
 });
+</script>
+
+<script>
+// Turn the existing, permission-checked admin tools into one navigable workspace.
+(()=>{
+ const dashboard=document.getElementById('adminDashboard');
+ if(!dashboard||dashboard.dataset.workspaceReady==='1')return;
+ dashboard.dataset.workspaceReady='1';
+ const stats=document.getElementById('adminStats');
+ const direct=[...dashboard.children];
+ const findHeader=(needle)=>direct.find(n=>n.classList?.contains('section-head')&&n.textContent.includes(needle));
+ const matchHeader=findHeader('مراجعة طلبات الخطّابات');
+ const mediationHeader=findHeader('طلبات الوساطة');
+ const matchList=document.getElementById('adminMatchmakerList');
+ const mediationList=document.getElementById('adminMediationList');
+ const reports=document.getElementById('adminReportsPanel');
+ const members=document.getElementById('adminMembersPanel');
+ const managers=document.getElementById('adminManageSection');
+ const makeModule=(id,title,description)=>{const box=document.createElement('section');box.className='admin-module';box.id=id;const intro=document.createElement('div');intro.className='admin-module-intro';intro.innerHTML='<b>'+title+'</b><p>'+description+'</p>';box.append(intro);return box};
+ const overview=makeModule('adminModuleOverview','نظرة عامة','ملخص مؤشرات المنصة وروابط سريعة للوصول إلى أدوات الإدارة.');
+ const matchModule=makeModule('adminModuleMatchmakers','إدارة الخطّابات والوسطاء','راجع مستندات الإثبات، واعتمد الحساب أو ارفضه أو أوقفه.');
+ const mediationModule=makeModule('adminModuleMediation','إدارة طلبات الوساطة','تابع طلبات الوساطة وحالاتها من لوحة واحدة.');
+ const reportsModule=makeModule('adminModuleReports','بلاغات الأعضاء','راجع البلاغات الواردة وحدّث حالتها بعد اتخاذ الإجراء.');
+ const membersModule=makeModule('adminModuleMembers','إدارة الأعضاء','راجع الملفات المنشورة وأخفِ الملف أو أعد إظهاره عند الحاجة.');
+ const managersModule=makeModule('adminModuleManagers','إدارة المديرين والمديرات','أرسل دعوات الإدارة وراجع الصلاحيات الحالية.');
+ const nav=document.createElement('nav');nav.className='admin-workspace-nav';nav.setAttribute('aria-label','أقسام لوحة المدير');
+ const tabs=[['overview','نظرة عامة',overview],['matchmakers','الخطّابات والوسطاء',matchModule],['mediation','طلبات الوساطة',mediationModule],['reports','البلاغات',reportsModule],['members','الأعضاء',membersModule],['managers','صلاحيات الإدارة',managersModule]];
+ const buttons=new Map();
+ tabs.forEach(([key,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>activate(key));nav.append(b);buttons.set(key,b)});
+ function activate(key){tabs.forEach(([k,,module])=>{module.hidden=k!==key;buttons.get(k).setAttribute('aria-pressed',String(k===key))});}
+ if(stats)overview.append(stats);
+ const quick=document.createElement('div');quick.className='admin-quick-links';
+ [['matchmakers','مراجعة الخطّابات','اعتماد وإيقاف حسابات الوساطة'],['mediation','طلبات الوساطة','متابعة الطلبات الحالية'],['reports','بلاغات الأعضاء','متابعة البلاغات والإجراءات'],['members','إدارة الأعضاء','إخفاء الملفات أو إظهارها'],['managers','صلاحيات الإدارة','إدارة حسابات المديرين']].forEach(([key,label,desc])=>{const b=document.createElement('button');b.type='button';b.textContent=label;const span=document.createElement('span');span.textContent=desc;b.append(span);b.addEventListener('click',()=>activate(key));quick.append(b)});
+ overview.append(quick);
+ if(matchHeader)matchModule.append(matchHeader);if(matchList)matchModule.append(matchList);
+ if(mediationHeader)mediationModule.append(mediationHeader);if(mediationList)mediationModule.append(mediationList);
+ if(reports)reportsModule.append(reports);if(members)membersModule.append(members);if(managers)managersModule.append(managers);
+ dashboard.prepend(nav);
+ [overview,matchModule,mediationModule,reportsModule,membersModule,managersModule].forEach(m=>dashboard.append(m));
+ // Reports, member controls and role management are manager-only; server RPCs remain the authority.
+ const refreshRoleVisibility=()=>{
+   const managerReady=!!managers&&!managers.hidden;
+   buttons.get('reports').hidden=!managerReady;buttons.get('members').hidden=!managerReady;buttons.get('managers').hidden=!managerReady;
+   reportsModule.hidden=!managerReady;membersModule.hidden=!managerReady;managersModule.hidden=true;
+   if(!managerReady&&['reports','members','managers'].includes([...buttons].find(([,b])=>b.getAttribute('aria-pressed')==='true')?.[0]))activate('overview');
+ };
+ if(managers){new MutationObserver(refreshRoleVisibility).observe(managers,{attributes:true,attributeFilter:['hidden']});}
+ refreshRoleVisibility();activate('overview');
+})();
 </script>
 </body>
 </html>
