@@ -670,33 +670,31 @@ requestMatch = async function(id){
 </script>
 
 <script>
-// Independent navigation fallback: works even if a legacy page script fails during startup.
-(()=>{
-  if(window.__mithaqNavigationFallbackInstalled)return;
-  window.__mithaqNavigationFallbackInstalled=true;
-  document.addEventListener('click',event=>{
-    const button=event.target?.closest?.('.nav-item[data-page]');
-    if(!button)return;
-    const id=button.dataset.page;
-    const page=document.getElementById(id);
-    if(!page)return;
-    event.preventDefault();
-    document.querySelectorAll('.page').forEach(section=>section.classList.toggle('active',section.id===id));
-    document.querySelectorAll('.nav-item[data-page]').forEach(item=>item.classList.toggle('active',item===button));
-    try{window.scrollTo({top:0,behavior:'smooth'});}catch(_){}
-    const refresh={
-      homePage:()=>window.renderProfiles?.(),
-      profilePage:()=>window.loadOwnProfile?.(),
-      matchesPage:()=>window.renderMatches?.(),
-      messagesPage:()=>window.renderChats?.(),
-      favoritesPage:()=>window.renderFavorites?.(),
-      notificationsPage:()=>window.renderNotifications?.(),
-      matchmakersPage:()=>{window.loadMatchmakers?.();window.loadMediationRequests?.();}
-    };
-    try{const run=refresh[id];if(run)Promise.resolve(run()).catch(error=>console.error('MITHAQ navigation refresh failed:',id,error));}
-    catch(error){console.error('MITHAQ navigation failed:',id,error);}
-  },true);
-})();
+// Reliable direct navigation: each bottom-tab button owns its click action.
+window.mithaqOpenPage=function(id){
+  const page=document.getElementById(id);
+  if(!page)return false;
+  document.querySelectorAll('.page').forEach(section=>section.classList.toggle('active',section.id===id));
+  document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(item=>item.classList.toggle('active',item.dataset.page===id));
+  try{window.scrollTo(0,0);}catch(_){}
+  const refresh={
+    homePage:()=>window.renderProfiles?.(),
+    profilePage:()=>window.loadOwnProfile?.(),
+    matchesPage:()=>window.renderMatches?.(),
+    messagesPage:()=>window.renderChats?.(),
+    favoritesPage:()=>window.renderFavorites?.(),
+    notificationsPage:()=>window.renderNotifications?.(),
+    matchmakersPage:()=>{window.loadMatchmakers?.();window.loadMediationRequests?.();},
+    adminPage:()=>window.adminRefresh?.()
+  };
+  try{const run=refresh[id];if(run)Promise.resolve(run()).catch(error=>console.error('MITHAQ section refresh failed:',id,error));}
+  catch(error){console.error('MITHAQ section navigation failed:',id,error);}
+  return false;
+};
+document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
+  const id=button.dataset.page;
+  button.setAttribute('onclick',"return window.mithaqOpenPage('"+id+"')");
+});
 </script>
 </body>
 </html>
