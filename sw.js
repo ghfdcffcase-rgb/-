@@ -1,5 +1,5 @@
 const CACHE_NAME = 'mithaq-shell-v1';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png'];
+const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './assets/icon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
