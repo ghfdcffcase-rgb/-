@@ -745,7 +745,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  function activate(key){tabs.forEach(([k,,module])=>{module.hidden=k!==key;buttons.get(k).setAttribute('aria-pressed',String(k===key))});}
  if(stats)overview.append(stats);
  const quick=document.createElement('div');quick.className='admin-quick-links';
- [['matchmakers','مراجعة الخطّابات','اعتماد وإيقاف حسابات الوساطة'],['mediation','طلبات الوساطة','متابعة الطلبات الحالية'],['reports','بلاغات الأعضاء','متابعة البلاغات والإجراءات'],['members','إدارة الأعضاء','إخفاء الملفات أو إظهارها'],['managers','صلاحيات الإدارة','إدارة حسابات المديرين']].forEach(([key,label,desc])=>{const b=document.createElement('button');b.type='button';b.textContent=label;const span=document.createElement('span');span.textContent=desc;b.append(span);b.addEventListener('click',()=>activate(key));quick.append(b)});
+ [['matchmakers','مراجعة الخطّابات','اعتماد وإيقاف حسابات الوساطة'],['mediation','طلبات الوساطة','متابعة الطلبات الحالية'],['reports','بلاغات الأعضاء','متابعة البلاغات والإجراءات'],['members','إدارة الأعضاء','إخفاء الملفات أو إظهارها'],['managers','صلاحيات الإدارة','إدارة حسابات المديرين']].forEach(([key,label,desc])=>{const b=document.createElement('button');b.type='button';b.dataset.adminQuick=key;b.textContent=label;const span=document.createElement('span');span.textContent=desc;b.append(span);b.addEventListener('click',()=>activate(key));quick.append(b)});
  overview.append(quick);
  if(matchHeader)matchModule.append(matchHeader);if(matchList)matchModule.append(matchList);
  if(mediationHeader)mediationModule.append(mediationHeader);if(mediationList)mediationModule.append(mediationList);
@@ -756,7 +756,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  const refreshRoleVisibility=()=>{
    const managerReady=!!managers&&!managers.hidden;
    buttons.get('reports').hidden=!managerReady;buttons.get('members').hidden=!managerReady;buttons.get('managers').hidden=!managerReady;
-   reportsModule.hidden=!managerReady;membersModule.hidden=!managerReady;managersModule.hidden=true;
+   reportsModule.hidden=!managerReady;membersModule.hidden=!managerReady;managersModule.hidden=!managerReady;quick.querySelectorAll('[data-admin-quick="reports"],[data-admin-quick="members"],[data-admin-quick="managers"]').forEach(b=>b.hidden=!managerReady);
    if(!managerReady&&['reports','members','managers'].includes([...buttons].find(([,b])=>b.getAttribute('aria-pressed')==='true')?.[0]))activate('overview');
  };
  if(managers){new MutationObserver(refreshRoleVisibility).observe(managers,{attributes:true,attributeFilter:['hidden']});}
