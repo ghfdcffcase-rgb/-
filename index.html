@@ -668,5 +668,35 @@ requestMatch = async function(id){
   };
 })();
 </script>
+
+<script>
+// Independent navigation fallback: works even if a legacy page script fails during startup.
+(()=>{
+  if(window.__mithaqNavigationFallbackInstalled)return;
+  window.__mithaqNavigationFallbackInstalled=true;
+  document.addEventListener('click',event=>{
+    const button=event.target?.closest?.('.nav-item[data-page]');
+    if(!button)return;
+    const id=button.dataset.page;
+    const page=document.getElementById(id);
+    if(!page)return;
+    event.preventDefault();
+    document.querySelectorAll('.page').forEach(section=>section.classList.toggle('active',section.id===id));
+    document.querySelectorAll('.nav-item[data-page]').forEach(item=>item.classList.toggle('active',item===button));
+    try{window.scrollTo({top:0,behavior:'smooth'});}catch(_){}
+    const refresh={
+      homePage:()=>window.renderProfiles?.(),
+      profilePage:()=>window.loadOwnProfile?.(),
+      matchesPage:()=>window.renderMatches?.(),
+      messagesPage:()=>window.renderChats?.(),
+      favoritesPage:()=>window.renderFavorites?.(),
+      notificationsPage:()=>window.renderNotifications?.(),
+      matchmakersPage:()=>{window.loadMatchmakers?.();window.loadMediationRequests?.();}
+    };
+    try{const run=refresh[id];if(run)Promise.resolve(run()).catch(error=>console.error('MITHAQ navigation refresh failed:',id,error));}
+    catch(error){console.error('MITHAQ navigation failed:',id,error);}
+  },true);
+})();
+</script>
 </body>
 </html>
