@@ -85,6 +85,16 @@ section{scroll-margin-top:90px}
 .admin-quick-links button span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:5px;line-height:1.6}
 @keyframes adminFade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:760px){.admin-workspace-nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.admin-workspace-nav button{min-height:44px}.admin-quick-links{grid-template-columns:1fr}}
+
+/* MITHAQ live audio */
+.audio-room-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;display:grid;gap:12px}
+.audio-room-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.audio-live-pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:6px 10px;background:#b84c4c18;color:#c65a5a;font-size:11px;font-weight:700}
+.audio-actions{display:flex;gap:8px;flex-wrap:wrap}.audio-actions button{flex:1;min-width:130px}
+.audio-request{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px;border:1px solid var(--line);border-radius:13px;margin-top:8px}
+.audio-muted{color:var(--muted);font-size:12px;line-height:1.8}
+#audioRemoteTracks{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media(max-width:760px){.audio-room-head{align-items:flex-start}.audio-actions button{min-width:100%}}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -107,6 +117,15 @@ section{scroll-margin-top:90px}
   <div class="trust"><div class="trust-item"><div class="trust-icon">♢</div><div><b>الخصوصية بيدك</b><span>تحكم بما يظهر في ملفك ولا تشارك بياناتك الخاصة دون رغبتك.</span></div></div><div class="trust-item"><div class="trust-icon">✓</div><div><b>تواصل بموافقة متبادلة</b><span>لا تبدأ المحادثة إلا بعد قبول الطرفين للطلب.</span></div></div><div class="trust-item"><div class="trust-icon">⌑</div><div><b>مجتمع أكثر أمانًا</b><span>خيارات الحظر والإبلاغ مطلوبة لحماية الأعضاء.</span></div></div></div>
 </section>
 <section id="matchmakersPage" class="page"><div class="section-head"><div><h3>دليل الخطّابات والوساطة</h3><p>اكتشفي خدمات الوساطة المناسبة، وابدئي بطلب خاص يحفظ خصوصية الجميع</p></div></div><div class="matchmaker-intro"><h4>وساطة راقية… وخطوات واضحة</h4><p>يجمع ميثاق بين دليل الخطّابات وخدمة الوساطة في مكان واحد. ابحثي حسب المنطقة ونوع الزواج، ثم أرسلي طلب تعارف منظمًا. لا تُشارك بيانات الاتصال ولا تُفتح المحادثة إلا بعد موافقة الأطراف المعنية.</p><div class="hero-actions"><button class="primary" type="button" id="matchmakerProfileBtn">جهّز ملفك للتعارف</button><button class="ghost" type="button" id="matchmakerRegisterBtn">التسجيل كخطّابة</button></div></div><div class="section-head"><div><h3>ابحثي في الدليل</h3><p>يعرض هذا الدليل الخطّابات المسجلات والمعتمدات فقط</p></div></div><div class="matchmaker-tools"><input id="matchmakerSearch" type="search" placeholder="ابحث بالمدينة أو اسم العرض…" aria-label="البحث عن خطّابة"><select id="matchmakerRegion" aria-label="تصفية المدينة"><option value="الكل">كل المناطق</option><option value="الرياض">الرياض</option><option value="جدة">جدة</option><option value="الدمام">الدمام</option><option value="مكة المكرمة">مكة المكرمة</option></select><select id="matchmakerType" aria-label="تصفية نوع الزواج"><option value="الكل">كل أنواع الزواج</option><option value="معلن">زواج معلن</option><option value="مسيار">زواج مسيار</option><option value="كلاهما">معلن ومسيار</option></select></div><div id="matchmakerDirectory" class="matchmaker-list"><div class="empty" style="grid-column:1/-1">لا توجد خطّابات معتمدات حتى الآن. ستظهر الملفات الحقيقية بعد التسجيل والموافقة.</div></div><div class="section-head"><div><h3>كيف تتم الوساطة؟</h3><p>رحلة واضحة تحفظ الخصوصية من أول خطوة</p></div></div><div class="matchmaker-steps"><div class="matchmaker-step"><div class="step-number">١</div><b>إنشاء ملف</b><p>أكمل ملفك وحدد المنطقة ونوع الزواج المطلوب.</p></div><div class="matchmaker-step"><div class="step-number">٢</div><b>إرسال طلب خاص</b><p>اختر الخطّابة وأرسل طلب وساطة دون نشر رقمك.</p></div><div class="matchmaker-step"><div class="step-number">٣</div><b>موافقة الأطراف</b><p>يُراجع الطلب ولا تتم مشاركة البيانات قبل الموافقة المطلوبة.</p></div><div class="matchmaker-step"><div class="step-number">٤</div><b>فتح التواصل</b><p>تبدأ المحادثة داخل التطبيق بعد اكتمال الموافقات.</p></div></div><div class="matchmaker-note"><strong>الخصوصية:</strong> لا يظهر ملف الخطّابة في الدليل إلا بعد اعتماد الإدارة، ولا يُفتح طلب الوساطة إلا من حساب مسجل.</div></section>
+<section id="audioPage" class="page">
+ <div class="section-head"><div><h3>البث الصوتي المباشر</h3><p>استمع للبث واطلب المشاركة بالصوت، بإدارة الخطّابة المضيفة</p></div><button class="ghost" id="audioRefresh" type="button">تحديث</button></div>
+ <div class="matchmaker-intro"><h4>مجلس ميثاق الصوتي</h4><p>تستطيع الخطّابة المعتمدة بدء مجلس صوتي. يستمع الأعضاء أولًا، ويمكنهم إرسال طلب للمشاركة بعد موافقة المضيفة. لا نعرض أرقام التواصل أو البيانات الخاصة داخل البث.</p></div>
+ <div id="audioHostPanel" class="form-panel" style="margin:16px 0"><h3 style="margin-top:0">إدارة البث</h3><p class="audio-muted">بدء البث متاح لحساب الخطّابة المعتمدة فقط.</p><div class="field"><label for="audioRoomTitle">عنوان المجلس</label><input id="audioRoomTitle" maxlength="90" placeholder="مثال: مجلس التعارف والتوافق"></div><div class="audio-actions" style="margin-top:12px"><button class="primary" id="audioStart" type="button">بدء بث صوتي</button><button class="ghost" id="audioEnd" type="button" disabled>إنهاء البث</button></div><div id="audioHostStatus" class="audio-muted" style="margin-top:10px">لم يبدأ بث من هذا الحساب في هذه الجلسة.</div><div id="audioRequests" style="margin-top:12px"></div></div>
+ <div class="section-head"><div><h3>المجالس المتاحة</h3><p>تظهر المجالس المباشرة أو المتوقفة مؤقتًا</p></div></div>
+ <div id="audioRoomsList"><div class="empty">جارٍ تحميل المجالس الصوتية…</div></div>
+ <div id="audioRemoteTracks" aria-hidden="true"></div>
+ <p class="audio-muted">يتطلب استخدام المايك إذن المتصفح. استخدم سماعة لتقليل الصدى، ولا تشارك معلومات شخصية أو حساسة أثناء البث.</p>
+</section>
 <section id="matchesPage" class="page"><div class="section-head"><div><h3>طلبات التوافق</h3><p>الطلبات التي أرسلتها أو استقبلتها</p></div></div><div id="matchesList" class="empty">♡<b>لا توجد طلبات بعد</b>عندما ترسل طلب توافق، ستجده هنا.</div></section>
 <section id="favoritesPage" class="page"><div class="section-head"><div><h3>ملفاتي المفضلة</h3><p>الملفات التي حفظتها للرجوع إليها لاحقًا</p></div><button class="ghost" type="button" onclick="renderFavorites()">تحديث</button></div><div id="favoritesList" class="profiles"><div class="empty">سجّل الدخول لعرض المفضلة.</div></div></section>
 <section id="notificationsPage" class="page"><div class="section-head"><div><h3>الإشعارات</h3><p>آخر التحديثات المتعلقة بطلبات التوافق والمراسلات</p></div><button class="ghost" type="button" onclick="markAllNotificationsRead()">تحديد الكل كمقروء</button></div><div id="notificationsList" class="chat-list"><div class="empty">لا توجد إشعارات بعد.</div></div></section>
@@ -116,7 +135,7 @@ section{scroll-margin-top:90px}
 </main>
 <p class="footer-note">ميثاق للتعارف الجاد. تُقيّد قاعدة البيانات الوصول إلى الملفات والرسائل حسب الصلاحيات، وتتحقق من أطراف الرسالة وقبول طلب التوافق قبل حفظها، كما يُسمح للحساب بتحديث وقت قراءة الإشعار فقط دون تغيير محتواه أو صاحبه. هذه النسخة تحتاج إلى اختبار عملي بحسابات حقيقية ومراجعة إعدادات النشر قبل الإطلاق، ولا يتم التحقق من الهوية تلقائيًا.</p>
 </div>
-<nav class="bottom-nav" aria-label="التنقل الرئيسي"><button class="nav-item active" data-page="homePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الرئيسية</span></button><button class="nav-item" data-page="matchmakersPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الخطّابات</span></button><button class="nav-item" data-page="matchesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>التوافق</span></button><button class="nav-item" data-page="favoritesPage"><span>♡</span><span>المفضلة</span></button><button class="nav-item" data-page="notificationsPage"><span>♧</span><span>الإشعارات</span><b id="notificationCount" hidden></b></button><button class="nav-item" data-page="messagesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>المراسلات</span></button><button class="nav-item" data-page="profilePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>ملفي</span></button><button class="nav-item" id="adminNavBtn" data-page="adminPage" hidden><img class="nav-thumb" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الإدارة</span></button></nav>
+<nav class="bottom-nav" aria-label="التنقل الرئيسي"><button class="nav-item active" data-page="homePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الرئيسية</span></button><button class="nav-item" data-page="matchmakersPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الخطّابات</span></button><button class="nav-item" data-page="audioPage"><span>◉</span><span>البث الصوتي</span></button><button class="nav-item" data-page="matchesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>التوافق</span></button><button class="nav-item" data-page="favoritesPage"><span>♡</span><span>المفضلة</span></button><button class="nav-item" data-page="notificationsPage"><span>♧</span><span>الإشعارات</span><b id="notificationCount" hidden></b></button><button class="nav-item" data-page="messagesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>المراسلات</span></button><button class="nav-item" data-page="profilePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>ملفي</span></button><button class="nav-item" id="adminNavBtn" data-page="adminPage" hidden><img class="nav-thumb" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الإدارة</span></button></nav>
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><div class="modal-head"><h3 id="modalTitle">إنشاء حساب في ميثاق</h3><button class="close" id="closeModal" aria-label="إغلاق">×</button></div><p class="hint">التسجيل متاح بالبريد أو الجوال. يلزم تفعيل مزود SMS في Supabase حتى تصل رموز التحقق.</p><form id="signupForm"><div class="form-grid"><div class="field full"><label for="signupEmail">البريد الإلكتروني</label><input id="signupEmail" type="email" required placeholder="name@example.com"></div><div class="field"><label for="signupPassword">كلمة المرور</label><input id="signupPassword" type="password" minlength="8" required placeholder="8 أحرف على الأقل"></div><div class="field"><label for="signupLanguage">لغة التطبيق</label><select id="signupLanguage"><option>العربية</option><option>English</option></select></div><div class="field full"><label><input type="checkbox" id="termsCheck" required style="width:auto"> أوافق على قواعد الاحترام والخصوصية، وأؤكد أن عمري 18 عامًا أو أكثر.</label></div></div><button class="primary" type="submit" style="width:100%;margin-top:15px">إنشاء حساب</button></form></div></div>
 <div class="modal-backdrop" id="chatBackdrop" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="modal"><div class="modal-head"><h3 id="chatTitle">المحادثة</h3><button class="close" id="closeChat" aria-label="إغلاق">×</button></div><div id="chatWindow" class="chat-window"><div class="hint">تظهر الرسائل بعد فتح محادثة مقبولة.</div></div><form id="sendForm" class="send-row"><input id="messageInput" required maxlength="2000" placeholder="اكتب رسالة محترمة…"><button class="primary" type="submit">إرسال</button></form><p class="hint">المراسلات مخصصة لطرفي طلب التوافق المقبول، وتخضع لصلاحيات قاعدة البيانات.</p></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -765,3 +784,116 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
 </script>
 </body>
 </html>
+
+<script>
+(function(){
+ const el=id=>document.getElementById(id);
+ let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false;
+ const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
+ function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
+ async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
+ async function audioInvoke(body){const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
+ async function audioConnect(roomId,asHost){
+   const data=await audioInvoke({action:'token',roomId});
+   if(!data?.token||!data?.serverUrl)throw new Error('لم يصل رمز اتصال صالح من خادم البث.');
+   if(!audioSdk)audioSdk=await import('https://esm.sh/livekit-client@2.15.6');
+   if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}
+   const room=new audioSdk.Room({adaptiveStream:true,dynacast:true});
+   room.on(audioSdk.RoomEvent.TrackSubscribed,(track,publication,participant)=>{
+     if(track.kind==='audio'){const node=track.attach();node.dataset.audioIdentity=participant.identity;el('audioRemoteTracks').appendChild(node)}
+   });
+   room.on(audioSdk.RoomEvent.TrackUnsubscribed,track=>track.detach().forEach(node=>node.remove()));
+   room.on(audioSdk.RoomEvent.Disconnected,()=>{el('audioRemoteTracks').replaceChildren()});
+   await room.connect(data.serverUrl,data.token);
+   audioRoom=room;currentAudioRoomId=roomId;
+   if(asHost&&data.canPublish)await room.localParticipant.setMicrophoneEnabled(true);
+   return data;
+ }
+ async function audioDisconnect(){if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;el('audioRemoteTracks').replaceChildren()}
+ async function audioRefreshRooms(){
+   if(audioRefreshBusy)return;audioRefreshBusy=true;
+   const target=el('audioRoomsList');target.innerHTML='<div class="empty">جارٍ تحديث المجالس…</div>';
+   try{
+     const {data,error}=await supabaseClient.from('audio_rooms').select('id,title,room_name,status,host_user_id,created_at,started_at').in('status',['live','paused']).order('created_at',{ascending:false}).limit(30);
+     if(error)throw error;
+     if(!data?.length){target.innerHTML='<div class="empty">لا توجد مجالس صوتية مباشرة حاليًا. ستظهر هنا المجالس التي تبدأها الخطّابات المعتمدات.</div>';return}
+     const {data:{user}}=await supabaseClient.auth.getUser();
+     target.innerHTML=data.map(room=>'<article class="audio-room-card"><div class="audio-room-head"><strong>'+escapeHtml(room.title||'مجلس ميثاق الصوتي')+'</strong><span class="audio-live-pill">'+(room.status==='live'?'● مباشر الآن':'◷ متوقف مؤقتًا')+'</span></div><div class="audio-muted">'+(room.status==='live'?'المجلس متاح للاستماع.':'المجلس متوقف مؤقتًا من المضيفة.')+'</div><div class="audio-actions">'+(room.status==='live'?'<button class="primary" type="button" data-audio-join="'+room.id+'">'+(user?.id===room.host_user_id?'العودة إلى بثي':'دخول للاستماع')+'</button>':'<button class="ghost" type="button" disabled>البث متوقف مؤقتًا</button>')+'</div></article>').join('');
+     target.querySelectorAll('[data-audio-join]').forEach(btn=>btn.addEventListener('click',()=>audioJoinRoom(btn.dataset.audioJoin)));
+   }catch(err){console.error('Audio rooms load failed:',err);target.innerHTML='<div class="empty">تعذر تحميل المجالس. '+escapeHtml(err.message||'تحقق من تسجيل الدخول والاتصال.')+'</div>'}
+   finally{audioRefreshBusy=false}
+ }
+ async function audioJoinRoom(roomId){
+   try{
+     const user=await audioUser();
+     const {data:room,error}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').eq('id',roomId).maybeSingle();
+     if(error)throw error;if(!room||room.status!=='live')throw new Error('هذا المجلس غير متاح حاليًا.');
+     await audioConnect(roomId,room.host_user_id===user.id);currentAudioRoomRow=room;
+     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. المايك متاح للمضيفة.';el('audioEnd').disabled=false;await audioLoadRequests(roomId)}
+     else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioRequests').innerHTML='<div class="audio-actions"><button class="primary" id="audioRequestSpeak" type="button">طلب المشاركة بالصوت</button></div>';el('audioRequestSpeak').addEventListener('click',()=>audioRequestSpeak(roomId))}
+     audioMsg('تم الاتصال بالمجلس الصوتي.');
+   }catch(err){console.error('Audio join failed:',err);audioMsg(err.message||'تعذر دخول المجلس الصوتي.')}
+ }
+ async function audioRequestSpeak(roomId){
+   try{
+     const user=await audioUser();
+     const {data:existing,error:readError}=await supabaseClient.from('audio_room_requests').select('id,status').eq('room_id',roomId).eq('requester_id',user.id).maybeSingle();
+     if(readError)throw readError;
+     if(existing&&['pending','approved'].includes(existing.status)){audioMsg(existing.status==='pending'?'طلبك قيد المراجعة.':'تمت الموافقة على طلبك.');return}
+     const payload={room_id:roomId,requester_id:user.id,status:'pending'};
+     const result=existing?await supabaseClient.from('audio_room_requests').update({status:'pending',updated_at:new Date().toISOString()}).eq('id',existing.id):await supabaseClient.from('audio_room_requests').insert(payload);
+     if(result.error)throw result.error;
+     audioMsg('تم إرسال طلب المشاركة للمضيفة.');
+   }catch(err){console.error('Audio speak request failed:',err);audioMsg(err.message||'تعذر إرسال طلب المشاركة.')}
+ }
+ async function audioLoadRequests(roomId){
+   const box=el('audioRequests');box.innerHTML='<div class="audio-muted">جارٍ تحميل طلبات المشاركة…</div>';
+   try{
+     const {data,error}=await supabaseClient.from('audio_room_requests').select('id,requester_id,status,created_at').eq('room_id',roomId).eq('status','pending').order('created_at',{ascending:true});
+     if(error)throw error;
+     if(!data?.length){box.innerHTML='<div class="audio-muted">لا توجد طلبات مشاركة معلّقة.</div>';return}
+     box.innerHTML='<h4>طلبات المشاركة بالصوت</h4>'+data.map(req=>'<div class="audio-request"><span>عضو يطلب المايك · '+escapeHtml(req.requester_id.slice(0,8))+'</span><div class="audio-actions"><button class="primary" data-audio-approve="'+req.id+'">قبول</button><button class="ghost" data-audio-reject="'+req.id+'">رفض</button></div></div>').join('');
+     box.querySelectorAll('[data-audio-approve]').forEach(b=>b.addEventListener('click',()=>audioReviewRequest(b.dataset.audioApprove,'approve_request',roomId)));
+     box.querySelectorAll('[data-audio-reject]').forEach(b=>b.addEventListener('click',()=>audioReviewRequest(b.dataset.audioReject,'reject_request',roomId)));
+   }catch(err){console.error('Audio requests load failed:',err);box.innerHTML='<div class="audio-muted">تعذر تحميل طلبات المشاركة. '+escapeHtml(err.message||'')+'</div>'}
+ }
+ async function audioReviewRequest(requestId,action,roomId){
+   try{await audioInvoke({action,roomId,requestId});audioMsg(action==='approve_request'?'تم قبول طلب المشاركة.':'تم رفض الطلب.');await audioLoadRequests(roomId)}
+   catch(err){audioMsg(err.message||'تعذر تحديث الطلب.')}
+ }
+ async function audioStart(){
+   const btn=el('audioStart');btn.disabled=true;
+   try{
+     await audioUser();
+     const title=el('audioRoomTitle').value.trim()||'مجلس ميثاق الصوتي';
+     const {data:existing,error:existingError}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').in('status',['live','paused']).limit(1).maybeSingle();
+     if(existingError)throw existingError;
+     if(existing)throw new Error('يوجد لديك أو لدى مضيف آخر مجلس نشط. أنهِ المجلس الحالي أولًا.');
+     const roomName='mithaq-'+crypto.randomUUID();
+     const {data:created,error}=await supabaseClient.from('audio_rooms').insert({title,room_name:roomName,status:'live',started_at:new Date().toISOString()}).select('id,title,status,host_user_id').single();
+     if(error)throw error;
+     currentAudioRoomRow=created;
+     await audioConnect(created.id,true);
+     el('audioHostStatus').textContent='البث مباشر الآن. يمكنك استقبال طلبات المشاركة وإدارة المجلس.';
+     el('audioEnd').disabled=false;
+     await audioLoadRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
+   }catch(err){console.error('Audio start failed:',err);el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
+   finally{btn.disabled=false}
+ }
+ async function audioEnd(){
+   if(!currentAudioRoomId){audioMsg('لا يوجد بث متصل لإنهائه.');return}
+   const btn=el('audioEnd');btn.disabled=true;
+   try{await audioInvoke({action:'end_room',roomId:currentAudioRoomId});await audioDisconnect();currentAudioRoomRow=null;el('audioHostStatus').textContent='تم إنهاء المجلس.';el('audioRequests').replaceChildren();audioMsg('تم إنهاء البث.');await audioRefreshRooms()}
+   catch(err){audioMsg(err.message||'تعذر إنهاء البث.');btn.disabled=false}
+ }
+ el('audioStart').addEventListener('click',audioStart);
+ el('audioEnd').addEventListener('click',audioEnd);
+ el('audioRefresh').addEventListener('click',audioRefreshRooms);
+ const baseShowPageAudio=showPage;
+ showPage=function(id){baseShowPageAudio(id);if(id==='audioPage')audioRefreshRooms()};
+ supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session?.user&&el('audioPage')?.classList.contains('active'))audioRefreshRooms();if(!session?.user&&audioRoom)audioDisconnect()});
+ audioRefreshRooms();
+ window.addEventListener('beforeunload',()=>{if(audioRoom)audioRoom.disconnect()});
+})();
+</script>
+
