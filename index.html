@@ -650,5 +650,23 @@ requestMatch = async function(id){
 })();
 </script>
 
+<script>
+// Ensure every main section refreshes its own data whenever it is opened.
+(()=>{
+  const previousShowPage=window.showPage;
+  if(typeof previousShowPage!=='function')return;
+  window.showPage=function(id){
+    previousShowPage(id);
+    try{
+      if(id==='homePage'&&typeof window.renderProfiles==='function')window.renderProfiles();
+      if(id==='profilePage'&&typeof window.loadOwnProfile==='function')window.loadOwnProfile();
+      if(id==='matchesPage'&&typeof window.renderMatches==='function')window.renderMatches();
+      if(id==='messagesPage'&&typeof window.renderChats==='function')window.renderChats();
+      if(id==='favoritesPage'&&typeof window.renderFavorites==='function')window.renderFavorites();
+      if(id==='notificationsPage'&&typeof window.renderNotifications==='function')window.renderNotifications();
+    }catch(err){console.error('Section refresh failed:',id,err);}
+  };
+})();
+</script>
 </body>
 </html>
