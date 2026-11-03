@@ -103,7 +103,7 @@ section{scroll-margin-top:90px}
 <div class="shell">
 <header class="topbar">
   <div class="brand"><div class="logo">م</div><div><h1>ميثاق <span style="color:var(--gold);font-family:Georgia,serif;font-weight:400">MITHAQ</span></h1><p>بداية جادة لحياة مشتركة</p></div></div>
-  <div class="top-actions"><span class="pill">✦ خصوصيتك أولويتنا</span><button class="ghost" id="adminToggleBtn" type="button" hidden>لوحة الإدارة</button><button class="primary" id="topJoin">إنشاء حساب</button></div>
+  <div class="top-actions"><span class="pill">✦ خصوصيتك أولويتنا</span><button class="ghost" id="adminToggleBtn" type="button" hidden>لوحة الإدارة</button><button class="primary" id="topJoin">تسجيل الدخول</button></div>
 </header>
 <div role="note" aria-label="ميثاق مجاني" style="margin:14px 0 0;padding:11px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--green2);font-size:13px;font-weight:700;text-align:center">✦ جميع خدمات ميثاق مجانية — بلا اشتراكات أو رسوم تسجيل</div>
 <main>
@@ -389,7 +389,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
     const otp=$('signupOtp');if(otp)otp.required=phone&&otpSent;
     submit.textContent=mode==='reset'?'إرسال رابط الاستعادة':mode==='recovery'?'حفظ كلمة المرور الجديدة':mode==='login'?(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز الجوال'):'تسجيل الدخول'):(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز التحقق'):'إنشاء حساب');
   }
-  function open(){mode='signup';otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync();modal.classList.add('open')}
+  function open(){mode='login';otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync();modal.classList.add('open')}
   window.openSignup=open;
   switcher.addEventListener('click',()=>{mode=mode==='signup'?'login':'signup';otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync()});
   reset.addEventListener('click',()=>{mode='reset';otpSent=false;sync()});
@@ -429,18 +429,20 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
         modal.classList.remove('open');toast(mode==='signup'?'تم إنشاء الحساب والتحقق من الجوال.':'تم تسجيل الدخول بنجاح.');showPage('homePage');await renderProfiles();return;
       }
+      const submittedMode=mode;
       const address=email.value.trim(),secret=password.value;
-      const result=mode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
+      const result=submittedMode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
-      if(mode==='signup'&&!result.data.session){toast('لم يتم فتح جلسة بعد. إذا كان هذا البريد مسجلًا من قبل، انتقل إلى تسجيل الدخول واستخدم كلمة المرور نفسها.');mode='login';sync();return}
-      if($('manageressInviteCode')?.value.trim()){
+      if(submittedMode==='signup'&&!result.data.session){toast('لم يتم فتح جلسة بعد. إذا كان هذا البريد مسجلًا من قبل، انتقل إلى تسجيل الدخول واستخدم كلمة المرور نفسها.');mode='login';sync();return}
+      if(submittedMode==='signup'&&$('manageressInviteCode')?.value.trim()){
         const {data:activation,error:activationError}=await supabaseClient.functions.invoke('activate-manageress',{body:{code:$('manageressInviteCode').value.trim()}});
         if(activationError)throw activationError;if(!activation?.success)throw new Error(activation?.error||'تعذر تفعيل صلاحيات المديرة.');
         toast('تم تفعيل حسابك كمديرة وخطّابة معتمدة.');
       }
       currentUserGender=result.data.user?.user_metadata?.gender||currentUserGender;
       if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
-      modal.classList.remove('open');toast(mode==='signup'?'تم إنشاء حسابك بنجاح.':'تم تسجيل الدخول بنجاح.');showPage('homePage');await renderProfiles();
+      let isAdmin=false;if(submittedMode==='login'){const {error:adminRoleError}=await supabaseClient.rpc('admin_dashboard_stats');isAdmin=!adminRoleError;}
+      modal.classList.remove('open');toast(isAdmin?'مرحبًا بك في إدارة ميثاق.':submittedMode==='signup'?'تم إنشاء حسابك بنجاح.':'تم تسجيل الدخول بنجاح.');showPage(isAdmin?'adminPage':'homePage');if(isAdmin)await window.adminRefresh?.();else await renderProfiles();
     }catch(err){console.error('Account flow failed:',err);toast(err.message||'تعذر إكمال العملية. تحقق من البيانات والإعدادات.')}finally{submit.disabled=false}
   },true);
   const topJoin=$('topJoin');
