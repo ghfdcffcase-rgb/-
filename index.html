@@ -447,6 +447,8 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   },true);
   const topJoin=$('topJoin');
   if(topJoin){const replacement=topJoin.cloneNode(true);topJoin.replaceWith(replacement);replacement.addEventListener('click',async()=>{const {data:{user}}=await supabaseClient.auth.getUser();if(user)showPage('profilePage');else open()})}
+  const heroJoin=$('heroJoin');
+  if(heroJoin){const heroReplacement=heroJoin.cloneNode(true);heroJoin.replaceWith(heroReplacement);heroReplacement.addEventListener('click',()=>open())}
   const topActions=document.querySelector('.top-actions');
   const logout=document.createElement('button');logout.type='button';logout.className='ghost';logout.textContent='تسجيل الخروج';logout.hidden=true;topActions?.insertBefore(logout,$('adminToggleBtn'));
   logout.addEventListener('click',async()=>{logout.disabled=true;try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUserGender=null;profileSaved=false;toast('تم تسجيل الخروج.');showPage('homePage');await renderProfiles();syncSession()}catch(err){toast('تعذر تسجيل الخروج: '+(err.message||''))}finally{logout.disabled=false}});
