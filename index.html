@@ -814,7 +814,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
  async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
- async function audioInvoke(body){const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
+ async function audioInvoke(body){const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token)throw new Error('انتهت جلسة الدخول. سجّل الدخول مجددًا ثم حاول تشغيل البث.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
  async function audioConnect(roomId,asHost){
    const data=await audioInvoke({action:'token',roomId});
    if(!data?.token||!data?.serverUrl)throw new Error('لم يصل رمز اتصال صالح من خادم البث.');
@@ -910,7 +910,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
    catch(err){audioMsg(err.message||'تعذر تحديث الطلب.')}
  }
  async function audioStart(){
-   const btn=el('audioStart');btn.disabled=true;
+   const btn=el('audioStart');btn.disabled=true;let createdRoom=null;
    try{
      const user=await audioUser();
      const title=el('audioRoomTitle').value.trim()||'مجلس ميثاق الصوتي';
@@ -920,12 +920,12 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      const roomName='mithaq-'+crypto.randomUUID();
      const {data:created,error}=await supabaseClient.from('audio_rooms').insert({title,room_name:roomName,host_user_id:user.id,status:'live',started_at:new Date().toISOString()}).select('id,title,status,host_user_id').single();
      if(error)throw error;
-     currentAudioRoomRow=created;
+     createdRoom=created;currentAudioRoomRow=created;
      await audioConnect(created.id,true);
      el('audioHostStatus').textContent='البث مباشر الآن. يمكنك استقبال طلبات المشاركة وإدارة المجلس.';
      el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=false;el('audioResume').hidden=true;audioRenderParticipants();
      await audioLoadRequests(created.id);audioWatchHostRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
-   }catch(err){console.error('Audio start failed:',err);el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
+   }catch(err){console.error('Audio start failed:',err);if(createdRoom?.id){try{await supabaseClient.from('audio_rooms').update({status:'ended'}).eq('id',createdRoom.id).eq('host_user_id',createdRoom.host_user_id)}catch(cleanupError){console.warn('Audio room cleanup failed:',cleanupError)}}currentAudioRoomRow=null;el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
    finally{btn.disabled=false}
  }
  async function audioRenderParticipants(){
