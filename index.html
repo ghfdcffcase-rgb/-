@@ -95,7 +95,7 @@ section{scroll-margin-top:90px}
 .audio-muted{color:var(--muted);font-size:12px;line-height:1.8}
 #audioRemoteTracks{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 @media(max-width:760px){.audio-room-head{align-items:flex-start}.audio-actions button{min-width:100%}}
-.audio-participants{display:grid;gap:8px}.audio-request{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.audio-actions{display:flex;gap:8px;flex-wrap:wrap}.audio-actions button{padding:8px 11px;font-size:12px}</style>
+.audio-participants{display:grid;gap:8px}.audio-request{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.audio-actions{display:flex;gap:8px;flex-wrap:wrap}.audio-actions button{padding:8px 11px;font-size:12px}.audio-host-layout{display:grid;grid-template-columns:minmax(230px,.7fr) minmax(0,1.3fr);gap:18px;align-items:start}.audio-host-sidebar{grid-column:1;grid-row:1;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--surface)}.audio-host-controls{grid-column:2;grid-row:1;min-width:0}.audio-guest-bar{position:sticky;bottom:10px;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;margin:18px 0 8px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 8px 28px #00000012}.audio-guest-bar[hidden]{display:none}.audio-guest-bar p{margin:4px 0 0}.audio-guest-bar button{min-width:190px}@media(max-width:760px){.audio-host-layout{grid-template-columns:1fr}.audio-host-sidebar,.audio-host-controls{grid-column:1;grid-row:auto}.audio-guest-bar{align-items:stretch;flex-direction:column}.audio-guest-bar button{width:100%;min-width:0}}</style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
@@ -120,10 +120,11 @@ section{scroll-margin-top:90px}
 <section id="audioPage" class="page">
  <div class="section-head"><div><h3>البث الصوتي المباشر</h3><p>استمع للبث واطلب المشاركة بالصوت، بإدارة الخطّابة المضيفة</p></div><button class="ghost" id="audioRefresh" type="button">تحديث</button></div>
  <div class="matchmaker-intro"><h4>مجلس ميثاق الصوتي</h4><p>تستطيع الخطّابة المعتمدة بدء مجلس صوتي. يستمع الأعضاء أولًا، ويمكنهم إرسال طلب للمشاركة بعد موافقة المضيفة. لا نعرض أرقام التواصل أو البيانات الخاصة داخل البث.</p></div>
- <div id="audioHostPanel" class="form-panel" style="margin:16px 0"><h3 style="margin-top:0">إدارة البث</h3><p class="audio-muted">بدء البث متاح لحساب الخطّابة المعتمدة فقط.</p><div class="field"><label for="audioRoomTitle">عنوان المجلس</label><input id="audioRoomTitle" maxlength="90" placeholder="مثال: مجلس التعارف والتوافق"></div><div class="audio-actions" style="margin-top:12px"><button class="primary" id="audioStart" type="button">بدء بث صوتي</button><button class="ghost" id="audioPause" type="button" disabled>إيقاف مؤقت</button><button class="ghost" id="audioResume" type="button" hidden>استئناف البث</button><button class="ghost" id="audioEnd" type="button" disabled>إنهاء البث</button></div><div id="audioHostStatus" class="audio-muted" style="margin-top:10px">لم يبدأ بث من هذا الحساب في هذه الجلسة.</div><div id="audioRequests" style="margin-top:12px"></div><div class="audio-muted" style="margin-top:14px">المتصلون الآن: <b id="audioParticipantCount">0</b></div><div id="audioParticipants" class="audio-participants" style="margin-top:8px"></div></div>
+ <div id="audioHostPanel" class="form-panel" style="margin:16px 0"><div class="audio-host-layout"><aside class="audio-host-sidebar"><div class="audio-muted">المتصلون الآن: <b id="audioParticipantCount">0</b></div><div id="audioParticipants" class="audio-participants" style="margin-top:8px"></div></aside><div class="audio-host-controls"><h3 style="margin-top:0">إدارة البث</h3><p class="audio-muted">بدء البث متاح لحساب الخطّابة المعتمدة فقط.</p><div class="field"><label for="audioRoomTitle">عنوان المجلس</label><input id="audioRoomTitle" maxlength="90" placeholder="مثال: مجلس التعارف والتوافق"></div><div class="audio-actions" style="margin-top:12px"><button class="primary" id="audioStart" type="button">بدء بث صوتي</button><button class="ghost" id="audioPause" type="button" disabled>إيقاف مؤقت</button><button class="ghost" id="audioResume" type="button" hidden>استئناف البث</button><button class="ghost" id="audioEnd" type="button" disabled>إنهاء البث</button></div><div id="audioHostStatus" class="audio-muted" style="margin-top:10px">لم يبدأ بث من هذا الحساب في هذه الجلسة.</div><div id="audioRequests" style="margin-top:12px"></div></div></div></div>
  <div class="section-head"><div><h3>المجالس المتاحة</h3><p>تظهر المجالس المباشرة أو المتوقفة مؤقتًا</p></div></div>
  <div id="audioRoomsList"><div class="empty">جارٍ تحميل المجالس الصوتية…</div></div>
  <div id="audioRemoteTracks" aria-hidden="true"></div>
+ <div id="audioGuestBar" class="audio-guest-bar" hidden><div><strong>الضيوف</strong><p id="audioGuestStatus" class="audio-muted">اطلب الانضمام بالصوت بعد موافقة الخطّابة.</p></div><button class="primary" id="audioGuestButton" type="button">♧ طلب الانضمام كضيف</button></div>
  <p class="audio-muted">يتطلب استخدام المايك إذن المتصفح. استخدم سماعة لتقليل الصدى، ولا تشارك معلومات شخصية أو حساسة أثناء البث.</p>
 </section>
 <section id="matchesPage" class="page"><div class="section-head"><div><h3>طلبات التوافق</h3><p>الطلبات التي أرسلتها أو استقبلتها</p></div></div><div id="matchesList" class="empty">♡<b>لا توجد طلبات بعد</b>عندما ترسل طلب توافق، ستجده هنا.</div></section>
@@ -809,7 +810,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
 <script>
 (function(){
  const el=id=>document.getElementById(id);
- let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false;
+ let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false,audioApprovalTimer=null,audioApprovalBusy=false,audioGuestMicActive=false;
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
  async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
@@ -827,10 +828,10 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
    room.on(audioSdk.RoomEvent.Disconnected,()=>{el('audioRemoteTracks').replaceChildren();audioRenderParticipants()});room.on(audioSdk.RoomEvent.ParticipantConnected,()=>audioRenderParticipants());room.on(audioSdk.RoomEvent.ParticipantDisconnected,()=>audioRenderParticipants());
    await room.connect(data.serverUrl,data.token);
    audioRoom=room;currentAudioRoomId=roomId;
-   if(asHost&&data.canPublish)await room.localParticipant.setMicrophoneEnabled(true);
+   if(data.canPublish)await room.localParticipant.setMicrophoneEnabled(true);
    return data;
  }
- async function audioDisconnect(){if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;el('audioRemoteTracks').replaceChildren();if(el('audioParticipants'))el('audioParticipants').replaceChildren();if(el('audioParticipantCount'))el('audioParticipantCount').textContent='0'}
+ async function audioDisconnect(){if(audioApprovalTimer){clearInterval(audioApprovalTimer);audioApprovalTimer=null}audioApprovalBusy=false;audioGuestMicActive=false;if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;currentAudioRoomRow=null;el('audioRemoteTracks').replaceChildren();if(el('audioParticipants'))el('audioParticipants').replaceChildren();if(el('audioParticipantCount'))el('audioParticipantCount').textContent='0';if(el('audioGuestBar'))el('audioGuestBar').hidden=true}
  async function audioRefreshRooms(){
    if(audioRefreshBusy)return;audioRefreshBusy=true;
    const target=el('audioRoomsList');target.innerHTML='<div class="empty">جارٍ تحديث المجالس…</div>';
@@ -851,7 +852,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      if(error)throw error;if(!room||(room.status!=='live'&&!(room.status==='paused'&&room.host_user_id===user.id)))throw new Error('هذا المجلس غير متاح حاليًا.');
      await audioConnect(roomId,room.host_user_id===user.id);currentAudioRoomRow=room;
      if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=room.status==='paused';el('audioResume').hidden=room.status!=='paused';el('audioPause').disabled=room.status!=='live';await audioLoadRequests(roomId);audioRenderParticipants()}
-     else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioStart').disabled=true;el('audioPause').disabled=true;el('audioEnd').disabled=true;el('audioRequests').innerHTML='<div class="audio-actions"><button class="primary" id="audioRequestSpeak" type="button">طلب المشاركة بالصوت</button></div>';el('audioRequestSpeak').addEventListener('click',()=>audioRequestSpeak(roomId));audioRenderParticipants()}
+     else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioStart').disabled=true;el('audioPause').disabled=true;el('audioEnd').disabled=true;el('audioGuestBar').hidden=false;el('audioGuestStatus').textContent='استمع للمجلس، واطلب الانضمام كضيف لفتح المايك بعد موافقة الخطّابة.';el('audioGuestButton').disabled=false;el('audioGuestButton').textContent='♧ طلب الانضمام كضيف';audioGuestMicActive=false;el('audioGuestButton').onclick=()=>audioRequestSpeak(roomId);audioWatchGuestApproval(roomId);audioRenderParticipants()}
      audioMsg('تم الاتصال بالمجلس الصوتي.');
    }catch(err){console.error('Audio join failed:',err);audioMsg(err.message||'تعذر دخول المجلس الصوتي.')}
  }
@@ -864,8 +865,27 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      const payload={room_id:roomId,requester_id:user.id,status:'pending'};
      const result=existing?await supabaseClient.from('audio_room_requests').update({status:'pending',updated_at:new Date().toISOString()}).eq('id',existing.id):await supabaseClient.from('audio_room_requests').insert(payload);
      if(result.error)throw result.error;
+     el('audioGuestStatus').textContent='تم إرسال طلبك. انتظر موافقة الخطّابة لفتح المايك.';el('audioGuestButton').disabled=true;el('audioGuestButton').textContent='✓ تم إرسال الطلب';
      audioMsg('تم إرسال طلب المشاركة للمضيفة.');
    }catch(err){console.error('Audio speak request failed:',err);audioMsg(err.message||'تعذر إرسال طلب المشاركة.')}
+ }
+ async function audioWatchGuestApproval(roomId){
+   if(audioApprovalTimer)clearInterval(audioApprovalTimer);
+   audioApprovalTimer=setInterval(async()=>{
+     if(audioApprovalBusy||!currentAudioRoomId||currentAudioRoomId!==roomId||audioGuestMicActive)return;
+     audioApprovalBusy=true;
+     try{
+       const user=await audioUser();
+       const {data:request,error}=await supabaseClient.from('audio_room_requests').select('status').eq('room_id',roomId).eq('requester_id',user.id).maybeSingle();
+       if(error)throw error;
+       if(request?.status==='approved'){
+         const connected=await audioConnect(roomId,false);
+         if(connected.canPublish){audioGuestMicActive=true;el('audioGuestStatus').textContent='وافقت الخطّابة! أصبح بإمكانك التحدث الآن.';el('audioGuestButton').textContent='✓ أنت ضيف ومتصل بالصوت';el('audioGuestButton').disabled=true;audioMsg('وافقت الخطّابة على مشاركتك. المايك مفتوح الآن.');}
+       }else if(request?.status==='rejected'){
+         el('audioGuestStatus').textContent='لم تتم الموافقة على الطلب. يمكنك إعادة المحاولة.';el('audioGuestButton').textContent='إعادة طلب الانضمام';el('audioGuestButton').disabled=false;
+       }
+     }catch(err){console.warn('Guest approval check failed:',err)}finally{audioApprovalBusy=false}
+   },3500);
  }
  async function audioLoadRequests(roomId){
    const box=el('audioRequests');box.innerHTML='<div class="audio-muted">جارٍ تحميل طلبات المشاركة…</div>';
@@ -885,13 +905,13 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  async function audioStart(){
    const btn=el('audioStart');btn.disabled=true;
    try{
-     await audioUser();
+     const user=await audioUser();
      const title=el('audioRoomTitle').value.trim()||'مجلس ميثاق الصوتي';
      const {data:existing,error:existingError}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').in('status',['live','paused']).limit(1).maybeSingle();
      if(existingError)throw existingError;
      if(existing)throw new Error('يوجد لديك أو لدى مضيف آخر مجلس نشط. أنهِ المجلس الحالي أولًا.');
      const roomName='mithaq-'+crypto.randomUUID();
-     const {data:created,error}=await supabaseClient.from('audio_rooms').insert({title,room_name:roomName,status:'live',started_at:new Date().toISOString()}).select('id,title,status,host_user_id').single();
+     const {data:created,error}=await supabaseClient.from('audio_rooms').insert({title,room_name:roomName,host_user_id:user.id,status:'live',started_at:new Date().toISOString()}).select('id,title,status,host_user_id').single();
      if(error)throw error;
      currentAudioRoomRow=created;
      await audioConnect(created.id,true);
