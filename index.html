@@ -431,7 +431,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
       const address=email.value.trim(),secret=password.value;
       const result=mode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
-      if(mode==='signup'&&!result.data.session){toast('تم إرسال رابط تأكيد الحساب إلى بريدك الإلكتروني. افتح الرسالة ثم سجّل الدخول.');mode='login';sync();return}
+      if(mode==='signup'&&!result.data.session){toast('لم يتم فتح جلسة بعد. إذا كان هذا البريد مسجلًا من قبل، انتقل إلى تسجيل الدخول واستخدم كلمة المرور نفسها.');mode='login';sync();return}
       if($('manageressInviteCode')?.value.trim()){
         const {data:activation,error:activationError}=await supabaseClient.functions.invoke('activate-manageress',{body:{code:$('manageressInviteCode').value.trim()}});
         if(activationError)throw activationError;if(!activation?.success)throw new Error(activation?.error||'تعذر تفعيل صلاحيات المديرة.');
