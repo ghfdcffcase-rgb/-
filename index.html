@@ -95,7 +95,7 @@ section{scroll-margin-top:90px}
 .audio-muted{color:var(--muted);font-size:12px;line-height:1.8}
 #audioRemoteTracks{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 @media(max-width:760px){.audio-room-head{align-items:flex-start}.audio-actions button{min-width:100%}}
-</style>
+.audio-participants{display:grid;gap:8px}.audio-request{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.audio-actions{display:flex;gap:8px;flex-wrap:wrap}.audio-actions button{padding:8px 11px;font-size:12px}</style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
@@ -120,7 +120,7 @@ section{scroll-margin-top:90px}
 <section id="audioPage" class="page">
  <div class="section-head"><div><h3>البث الصوتي المباشر</h3><p>استمع للبث واطلب المشاركة بالصوت، بإدارة الخطّابة المضيفة</p></div><button class="ghost" id="audioRefresh" type="button">تحديث</button></div>
  <div class="matchmaker-intro"><h4>مجلس ميثاق الصوتي</h4><p>تستطيع الخطّابة المعتمدة بدء مجلس صوتي. يستمع الأعضاء أولًا، ويمكنهم إرسال طلب للمشاركة بعد موافقة المضيفة. لا نعرض أرقام التواصل أو البيانات الخاصة داخل البث.</p></div>
- <div id="audioHostPanel" class="form-panel" style="margin:16px 0"><h3 style="margin-top:0">إدارة البث</h3><p class="audio-muted">بدء البث متاح لحساب الخطّابة المعتمدة فقط.</p><div class="field"><label for="audioRoomTitle">عنوان المجلس</label><input id="audioRoomTitle" maxlength="90" placeholder="مثال: مجلس التعارف والتوافق"></div><div class="audio-actions" style="margin-top:12px"><button class="primary" id="audioStart" type="button">بدء بث صوتي</button><button class="ghost" id="audioEnd" type="button" disabled>إنهاء البث</button></div><div id="audioHostStatus" class="audio-muted" style="margin-top:10px">لم يبدأ بث من هذا الحساب في هذه الجلسة.</div><div id="audioRequests" style="margin-top:12px"></div></div>
+ <div id="audioHostPanel" class="form-panel" style="margin:16px 0"><h3 style="margin-top:0">إدارة البث</h3><p class="audio-muted">بدء البث متاح لحساب الخطّابة المعتمدة فقط.</p><div class="field"><label for="audioRoomTitle">عنوان المجلس</label><input id="audioRoomTitle" maxlength="90" placeholder="مثال: مجلس التعارف والتوافق"></div><div class="audio-actions" style="margin-top:12px"><button class="primary" id="audioStart" type="button">بدء بث صوتي</button><button class="ghost" id="audioPause" type="button" disabled>إيقاف مؤقت</button><button class="ghost" id="audioResume" type="button" hidden>استئناف البث</button><button class="ghost" id="audioEnd" type="button" disabled>إنهاء البث</button></div><div id="audioHostStatus" class="audio-muted" style="margin-top:10px">لم يبدأ بث من هذا الحساب في هذه الجلسة.</div><div id="audioRequests" style="margin-top:12px"></div><div class="audio-muted" style="margin-top:14px">المتصلون الآن: <b id="audioParticipantCount">0</b></div><div id="audioParticipants" class="audio-participants" style="margin-top:8px"></div></div>
  <div class="section-head"><div><h3>المجالس المتاحة</h3><p>تظهر المجالس المباشرة أو المتوقفة مؤقتًا</p></div></div>
  <div id="audioRoomsList"><div class="empty">جارٍ تحميل المجالس الصوتية…</div></div>
  <div id="audioRemoteTracks" aria-hidden="true"></div>
@@ -812,13 +812,13 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      if(track.kind==='audio'){const node=track.attach();node.dataset.audioIdentity=participant.identity;el('audioRemoteTracks').appendChild(node)}
    });
    room.on(audioSdk.RoomEvent.TrackUnsubscribed,track=>track.detach().forEach(node=>node.remove()));
-   room.on(audioSdk.RoomEvent.Disconnected,()=>{el('audioRemoteTracks').replaceChildren()});
+   room.on(audioSdk.RoomEvent.Disconnected,()=>{el('audioRemoteTracks').replaceChildren();audioRenderParticipants()});room.on(audioSdk.RoomEvent.ParticipantConnected,()=>audioRenderParticipants());room.on(audioSdk.RoomEvent.ParticipantDisconnected,()=>audioRenderParticipants());
    await room.connect(data.serverUrl,data.token);
    audioRoom=room;currentAudioRoomId=roomId;
    if(asHost&&data.canPublish)await room.localParticipant.setMicrophoneEnabled(true);
    return data;
  }
- async function audioDisconnect(){if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;el('audioRemoteTracks').replaceChildren()}
+ async function audioDisconnect(){if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;el('audioRemoteTracks').replaceChildren();if(el('audioParticipants'))el('audioParticipants').replaceChildren();if(el('audioParticipantCount'))el('audioParticipantCount').textContent='0'}
  async function audioRefreshRooms(){
    if(audioRefreshBusy)return;audioRefreshBusy=true;
    const target=el('audioRoomsList');target.innerHTML='<div class="empty">جارٍ تحديث المجالس…</div>';
@@ -838,8 +838,8 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      const {data:room,error}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').eq('id',roomId).maybeSingle();
      if(error)throw error;if(!room||room.status!=='live')throw new Error('هذا المجلس غير متاح حاليًا.');
      await audioConnect(roomId,room.host_user_id===user.id);currentAudioRoomRow=room;
-     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. المايك متاح للمضيفة.';el('audioEnd').disabled=false;await audioLoadRequests(roomId)}
-     else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioRequests').innerHTML='<div class="audio-actions"><button class="primary" id="audioRequestSpeak" type="button">طلب المشاركة بالصوت</button></div>';el('audioRequestSpeak').addEventListener('click',()=>audioRequestSpeak(roomId))}
+     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;await audioLoadRequests(roomId);audioRenderParticipants()}
+     else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioStart').disabled=true;el('audioPause').disabled=true;el('audioEnd').disabled=true;el('audioRequests').innerHTML='<div class="audio-actions"><button class="primary" id="audioRequestSpeak" type="button">طلب المشاركة بالصوت</button></div>';el('audioRequestSpeak').addEventListener('click',()=>audioRequestSpeak(roomId));audioRenderParticipants()}
      audioMsg('تم الاتصال بالمجلس الصوتي.');
    }catch(err){console.error('Audio join failed:',err);audioMsg(err.message||'تعذر دخول المجلس الصوتي.')}
  }
@@ -884,18 +884,48 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      currentAudioRoomRow=created;
      await audioConnect(created.id,true);
      el('audioHostStatus').textContent='البث مباشر الآن. يمكنك استقبال طلبات المشاركة وإدارة المجلس.';
-     el('audioEnd').disabled=false;
+     el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=false;el('audioResume').hidden=true;audioRenderParticipants();
      await audioLoadRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
    }catch(err){console.error('Audio start failed:',err);el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
    finally{btn.disabled=false}
  }
+ async function audioRenderParticipants(){
+   const box=el('audioParticipants');if(!box)return;
+   const room=audioRoom;const participants=room?[...room.remoteParticipants.values()]:[];
+   const count=participants.length+(room?1:0);el('audioParticipantCount').textContent=String(count);
+   const isHost=!!currentAudioRoomRow&&currentAudioRoomRow.host_user_id===(await supabaseClient.auth.getUser()).data.user?.id;
+   if(!participants.length){box.innerHTML='<div class="audio-muted">لا يوجد متحدثون آخرون متصلون حاليًا.</div>';return}
+   box.innerHTML=participants.map(p=>{
+     const identity=String(p.identity||'');const canPublish=p.permissions?.canPublish!==false;
+     return '<div class="audio-request"><span>مشارك في المجلس</span>'+(isHost?'<div class="audio-actions"><button class="ghost" type="button" data-audio-mic="'+escapeHtml(identity)+'" data-allow="'+(!canPublish)+'">'+(canPublish?'سحب المايك':'منح المايك')+'</button><button class="ghost" type="button" data-audio-remove="'+escapeHtml(identity)+'">إخراج</button></div>':'')+'</div>';
+   }).join('');
+   box.querySelectorAll('[data-audio-mic]').forEach(b=>b.addEventListener('click',()=>audioModerateParticipant('set_speaker',b.dataset.audioMic,b.dataset.allow==='true')));
+   box.querySelectorAll('[data-audio-remove]').forEach(b=>b.addEventListener('click',()=>audioModerateParticipant('remove_participant',b.dataset.audioRemove)));
+ }
+ async function audioModerateParticipant(action,identity,allow){
+   try{await audioInvoke({action,roomId:currentAudioRoomId,identity,...(action==='set_speaker'?{allow}:{})});audioMsg(action==='remove_participant'?'تم إخراج المشارك.':(allow?'تم منح المايك.':'تم سحب المايك.'));audioRenderParticipants()}
+   catch(err){audioMsg(err.message||'تعذر تنفيذ الإجراء.')}
+ }
+ async function audioPauseResume(action){
+   if(!currentAudioRoomId)return;
+   const pause=action==='pause_room';const btn=pause?el('audioPause'):el('audioResume');
+   btn.disabled=true;
+   try{
+     await audioInvoke({action,roomId:currentAudioRoomId});
+     el('audioPause').hidden=pause;el('audioResume').hidden=!pause;el('audioPause').disabled=false;el('audioResume').disabled=false;
+     el('audioHostStatus').textContent=pause?'البث متوقف مؤقتًا. اضغطي استئناف للعودة إلى البث.':'عاد البث مباشرًا.';
+     await audioRefreshRooms();audioRenderParticipants();audioMsg(pause?'تم إيقاف البث مؤقتًا.':'تم استئناف البث.');
+   }catch(err){btn.disabled=false;audioMsg(err.message||'تعذر تغيير حالة البث.')}
+ }
  async function audioEnd(){
    if(!currentAudioRoomId){audioMsg('لا يوجد بث متصل لإنهائه.');return}
    const btn=el('audioEnd');btn.disabled=true;
-   try{await audioInvoke({action:'end_room',roomId:currentAudioRoomId});await audioDisconnect();currentAudioRoomRow=null;el('audioHostStatus').textContent='تم إنهاء المجلس.';el('audioRequests').replaceChildren();audioMsg('تم إنهاء البث.');await audioRefreshRooms()}
+   try{await audioInvoke({action:'end_room',roomId:currentAudioRoomId});await audioDisconnect();currentAudioRoomRow=null;el('audioHostStatus').textContent='تم إنهاء المجلس.';el('audioRequests').replaceChildren();el('audioStart').disabled=false;el('audioPause').disabled=true;el('audioResume').hidden=true;el('audioEnd').disabled=true;audioMsg('تم إنهاء البث.');await audioRefreshRooms()}
    catch(err){audioMsg(err.message||'تعذر إنهاء البث.');btn.disabled=false}
  }
  el('audioStart').addEventListener('click',audioStart);
+ el('audioPause').addEventListener('click',()=>audioPauseResume('pause_room'));
+ el('audioResume').addEventListener('click',()=>audioPauseResume('resume_room'));
  el('audioEnd').addEventListener('click',audioEnd);
  el('audioRefresh').addEventListener('click',audioRefreshRooms);
  const baseShowPageAudio=showPage;
