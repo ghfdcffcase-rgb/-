@@ -356,11 +356,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   const displayNameField=document.createElement('div');displayNameField.className='field full';displayNameField.innerHTML='<label for="signupDisplayName">الاسم الذي سيظهر في الموقع</label><input id="signupDisplayName" type="text" maxlength="60" autocomplete="name" placeholder="اكتبي اسمك أو اسم العرض">';
   genderField?.after(displayNameField);
   const inviteField=$('manageressInviteCode')?.closest('.field');
-  const adminUsernameField=document.createElement('div');adminUsernameField.className='field full';adminUsernameField.innerHTML='<label for="signupAdminUsername">اسم المستخدم الإداري</label><input id="signupAdminUsername" type="text" maxlength="40" autocomplete="username" placeholder="اختاري اسم دخول خاصًا بك"><small class="hint">يظهر هذا الحقل عند إدخال رمز تفعيل المديرة فقط.</small>';
-  inviteField?.after(adminUsernameField);
   const inviteInput=$('manageressInviteCode');
-  function syncAdminUsernameField(){const visible=!!inviteInput?.value.trim();adminUsernameField.hidden=!visible;const fieldInput=$('signupAdminUsername');if(fieldInput)fieldInput.required=visible&&mode==='signup';}
-  inviteInput?.addEventListener('input',syncAdminUsernameField);
   const termsField=$('termsCheck')?.closest('.field');
   const submit=form.querySelector('button[type="submit"]');
   let mode='signup',otpSent=false;
@@ -370,23 +366,6 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   const reset=document.createElement('button');
   reset.type='button';reset.className='ghost';reset.textContent='نسيت كلمة المرور؟';reset.style.cssText='display:none;width:100%;margin-top:8px';
   form.after(reset);
-  const adminLoginToggle=document.createElement('button');adminLoginToggle.type='button';adminLoginToggle.className='ghost';adminLoginToggle.textContent='دخول المدير والمديرة باسم المستخدم';adminLoginToggle.style.cssText='display:block;width:100%;margin-top:10px';
-  const adminLoginPanel=document.createElement('section');adminLoginPanel.className='form-panel';adminLoginPanel.hidden=true;adminLoginPanel.style.cssText='margin-top:12px;max-width:100%';
-  adminLoginPanel.innerHTML='<h3 style="margin-top:0">دخول الإدارة</h3><p class="hint">هذا الدخول مخصص للمدير والمديرة فقط.</p><form id="adminUsernameLoginForm"><div class="field"><label for="adminLoginUsername">اسم المستخدم</label><input id="adminLoginUsername" maxlength="40" autocomplete="username" required placeholder="أم صقر"></div><div class="field" style="margin-top:12px"><label for="adminLoginPassword">كلمة المرور</label><input id="adminLoginPassword" type="password" autocomplete="current-password" minlength="8" maxlength="128" required></div><button class="primary" id="adminUsernameLoginSubmit" type="submit" style="width:100%;margin-top:14px">تسجيل دخول الإدارة</button></form>';
-  reset.after(adminLoginToggle);adminLoginToggle.after(adminLoginPanel);
-  adminLoginToggle.addEventListener('click',()=>{const opening=adminLoginPanel.hidden;adminLoginPanel.hidden=!opening;form.hidden=opening;switcher.hidden=opening;reset.hidden=opening;adminLoginToggle.textContent=opening?'العودة إلى دخول الأعضاء':'دخول المدير والمديرة باسم المستخدم';if(title)title.textContent=opening?'دخول الإدارة':'تسجيل الدخول إلى ميثاق';});
-  adminLoginPanel.querySelector('#adminUsernameLoginForm').addEventListener('submit',async e=>{
-    e.preventDefault();const button=$('adminUsernameLoginSubmit');button.disabled=true;
-    try{
-      const {data,error}=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'login',username:$('adminLoginUsername').value.trim(),password:$('adminLoginPassword').value}});
-      if(error)throw error;if(!data?.access_token||!data?.refresh_token)throw new Error(data?.error||'اسم المستخدم أو كلمة المرور غير صحيحة.');
-      const {data:sessionData,error:setError}=await supabaseClient.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
-      if(setError||!sessionData?.session)throw setError||new Error('لم تكتمل جلسة الدخول.');
-      currentUserGender=sessionData.user?.user_metadata?.gender||null;
-      modal.classList.remove('open');toast('تم تسجيل دخول الإدارة.');showPage('homePage');await renderProfiles();
-    }catch(err){toast(err.message||'تعذر تسجيل دخول الإدارة.');}
-    finally{button.disabled=false;}
-  });
   const method=$('signupMethod'),phoneField=$('signupPhone')?.closest('.field'),otpField=$('signupOtp')?.closest('.field');
   function sync(){
     const phone=!['reset','recovery'].includes(mode)&&method?.value==='phone';
@@ -403,7 +382,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
     if(passwordLabel)passwordLabel.textContent=mode==='recovery'?'كلمة المرور الجديدة':'كلمة المرور';
     if(email){email.required=!phone&&mode!=='recovery';email.autocomplete=mode==='login'?'username':'email';}
     if(genderField){genderField.hidden=mode!=='signup';const g=$('signupGender');if(g)g.required=mode==='signup';}
-    displayNameField.hidden=mode!=='signup';const displayName=$('signupDisplayName');if(displayName)displayName.required=mode==='signup';syncAdminUsernameField();
+    displayNameField.hidden=mode!=='signup';const displayName=$('signupDisplayName');if(displayName)displayName.required=mode==='signup';
     if(termsField){termsField.hidden=mode!=='signup';const t=$('termsCheck');if(t)t.required=mode==='signup';}
     const otp=$('signupOtp');if(otp)otp.required=phone&&otpSent;
     submit.textContent=mode==='reset'?'إرسال رابط الاستعادة':mode==='recovery'?'حفظ كلمة المرور الجديدة':mode==='login'?(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز الجوال'):'تسجيل الدخول'):(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز التحقق'):'إنشاء حساب');
@@ -449,17 +428,13 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         modal.classList.remove('open');toast(mode==='signup'?'تم إنشاء الحساب والتحقق من الجوال.':'تم تسجيل الدخول بنجاح.');showPage('homePage');await renderProfiles();return;
       }
       const address=email.value.trim(),secret=password.value;
-      const result=mode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim(),admin_username:$('manageressInviteCode')?.value.trim()?$('signupAdminUsername')?.value.trim():null}}});
+      const result=mode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
       if(mode==='signup'&&!result.data.session){toast('تم إرسال رابط تأكيد الحساب إلى بريدك الإلكتروني. افتح الرسالة ثم سجّل الدخول.');mode='login';sync();return}
       if($('manageressInviteCode')?.value.trim()){
         const {data:activation,error:activationError}=await supabaseClient.functions.invoke('activate-manageress',{body:{code:$('manageressInviteCode').value.trim()}});
         if(activationError)throw activationError;if(!activation?.success)throw new Error(activation?.error||'تعذر تفعيل صلاحيات المديرة.');
-        const requestedAdminUsername=$('signupAdminUsername')?.value.trim()||result.data.user?.user_metadata?.admin_username;
-        if(!requestedAdminUsername)throw new Error('أدخلي اسم المستخدم الإداري ثم أعيدي تفعيل الحساب.');
-        const {data:usernameSaved,error:usernameSaveError}=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'set_username',username:requestedAdminUsername}});
-        if(usernameSaveError||!usernameSaved?.success)throw new Error(usernameSaved?.error||usernameSaveError?.message||'تعذر حفظ اسم المستخدم الإداري.');
-        toast('تم تفعيل حسابك كمديرة وخطّابة معتمدة وحفظ اسم الدخول.');
+        toast('تم تفعيل حسابك كمديرة وخطّابة معتمدة.');
       }
       currentUserGender=result.data.user?.user_metadata?.gender||currentUserGender;
       if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
