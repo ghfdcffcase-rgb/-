@@ -946,3 +946,43 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
 })();
 </script>
 
+
+<script>
+(function(){
+  const dashboard=document.getElementById('adminDashboard');
+  if(!dashboard)return;
+  if(document.getElementById('adminDisplayNamePanel'))return;
+  const panel=document.createElement('section');
+  panel.id='adminDisplayNamePanel';
+  panel.className='form-panel';
+  panel.style.cssText='margin:16px 0;max-width:100%';
+  panel.innerHTML='<div class="section-head"><div><h3>اسم المدير أو المديرة</h3><p>يمكن تغيير الاسم الظاهر في لوحة الإدارة في أي وقت.</p></div></div><div class="field"><label for="adminDisplayNameInput">الاسم الظاهر</label><input id="adminDisplayNameInput" maxlength="60" placeholder="أم صقر"></div><button type="button" class="primary" id="saveAdminDisplayName" style="margin-top:12px">حفظ الاسم</button><p class="hint" id="adminDisplayNameStatus">الاسم الافتراضي للمدير: أم صقر.</p>';
+  dashboard.prepend(panel);
+  let loaded=false;
+  async function loadName(){
+    if(loaded||dashboard.hidden)return;
+    const {data:{user},error}=await supabaseClient.auth.getUser();
+    if(error||!user)return;
+    const input=document.getElementById('adminDisplayNameInput');
+    if(input)input.value=String(user.user_metadata?.full_name||'أم صقر');
+    loaded=true;
+  }
+  const observer=new MutationObserver(()=>loadName());
+  observer.observe(dashboard,{attributes:true,attributeFilter:['hidden']});
+  loadName();
+  document.getElementById('saveAdminDisplayName').addEventListener('click',async()=>{
+    const input=document.getElementById('adminDisplayNameInput');
+    const status=document.getElementById('adminDisplayNameStatus');
+    const value=String(input?.value||'').trim();
+    if(value.length<2||value.length>60){status.textContent='اكتب اسمًا من حرفين إلى 60 حرفًا.';return}
+    const button=document.getElementById('saveAdminDisplayName');button.disabled=true;
+    try{
+      const {data,error}=await supabaseClient.auth.updateUser({data:{full_name:value}});
+      if(error)throw error;
+      status.textContent='تم حفظ الاسم في بيانات حسابك.';
+      loaded=true;
+    }catch(err){status.textContent='تعذر حفظ الاسم: '+(err.message||'حاول مرة أخرى.')}
+    finally{button.disabled=false}
+  });
+})();
+</script>
