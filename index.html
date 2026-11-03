@@ -810,7 +810,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
 <script>
 (function(){
  const el=id=>document.getElementById(id);
- let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false,audioApprovalTimer=null,audioApprovalBusy=false,audioGuestMicActive=false;
+ let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false,audioApprovalTimer=null,audioApprovalBusy=false,audioGuestMicActive=false,audioHostRequestsTimer=null,audioRequestsBusy=false;
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
  async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
@@ -831,7 +831,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
    if(data.canPublish)await room.localParticipant.setMicrophoneEnabled(true);
    return data;
  }
- async function audioDisconnect(){if(audioApprovalTimer){clearInterval(audioApprovalTimer);audioApprovalTimer=null}audioApprovalBusy=false;audioGuestMicActive=false;if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;currentAudioRoomRow=null;el('audioRemoteTracks').replaceChildren();if(el('audioParticipants'))el('audioParticipants').replaceChildren();if(el('audioParticipantCount'))el('audioParticipantCount').textContent='0';if(el('audioGuestBar'))el('audioGuestBar').hidden=true}
+ async function audioDisconnect(){if(audioApprovalTimer){clearInterval(audioApprovalTimer);audioApprovalTimer=null}if(audioHostRequestsTimer){clearInterval(audioHostRequestsTimer);audioHostRequestsTimer=null}audioRequestsBusy=false;audioApprovalBusy=false;audioGuestMicActive=false;if(audioRoom){try{await audioRoom.disconnect()}catch{}audioRoom=null}currentAudioRoomId=null;currentAudioRoomRow=null;el('audioRemoteTracks').replaceChildren();if(el('audioParticipants'))el('audioParticipants').replaceChildren();if(el('audioParticipantCount'))el('audioParticipantCount').textContent='0';if(el('audioGuestBar'))el('audioGuestBar').hidden=true}
  async function audioRefreshRooms(){
    if(audioRefreshBusy)return;audioRefreshBusy=true;
    const target=el('audioRoomsList');target.innerHTML='<div class="empty">جارٍ تحديث المجالس…</div>';
@@ -851,7 +851,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      const {data:room,error}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').eq('id',roomId).maybeSingle();
      if(error)throw error;if(!room||(room.status!=='live'&&!(room.status==='paused'&&room.host_user_id===user.id)))throw new Error('هذا المجلس غير متاح حاليًا.');
      await audioConnect(roomId,room.host_user_id===user.id);currentAudioRoomRow=room;
-     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=room.status==='paused';el('audioResume').hidden=room.status!=='paused';el('audioPause').disabled=room.status!=='live';await audioLoadRequests(roomId);audioRenderParticipants()}
+     if(room.host_user_id===user.id){el('audioGuestBar').hidden=true;el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=room.status==='paused';el('audioResume').hidden=room.status!=='paused';el('audioPause').disabled=room.status!=='live';await audioLoadRequests(roomId);audioWatchHostRequests(roomId);audioRenderParticipants()}
      else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioStart').disabled=true;el('audioPause').disabled=true;el('audioEnd').disabled=true;el('audioGuestBar').hidden=false;el('audioGuestStatus').textContent='استمع للمجلس، واطلب الانضمام كضيف لفتح المايك بعد موافقة الخطّابة.';el('audioGuestButton').disabled=false;el('audioGuestButton').textContent='♧ طلب الانضمام كضيف';audioGuestMicActive=false;el('audioGuestButton').onclick=()=>audioRequestSpeak(roomId);audioWatchGuestApproval(roomId);audioRenderParticipants()}
      audioMsg('تم الاتصال بالمجلس الصوتي.');
    }catch(err){console.error('Audio join failed:',err);audioMsg(err.message||'تعذر دخول المجلس الصوتي.')}
@@ -887,6 +887,13 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      }catch(err){console.warn('Guest approval check failed:',err)}finally{audioApprovalBusy=false}
    },3500);
  }
+ async function audioWatchHostRequests(roomId){
+   if(audioHostRequestsTimer)clearInterval(audioHostRequestsTimer);
+   audioHostRequestsTimer=setInterval(async()=>{
+     if(audioRequestsBusy||!currentAudioRoomId||currentAudioRoomId!==roomId||currentAudioRoomRow?.host_user_id!==(await supabaseClient.auth.getUser()).data.user?.id)return;
+     audioRequestsBusy=true;try{await audioLoadRequests(roomId)}finally{audioRequestsBusy=false}
+   },4000);
+ }
  async function audioLoadRequests(roomId){
    const box=el('audioRequests');box.innerHTML='<div class="audio-muted">جارٍ تحميل طلبات المشاركة…</div>';
    try{
@@ -917,7 +924,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      await audioConnect(created.id,true);
      el('audioHostStatus').textContent='البث مباشر الآن. يمكنك استقبال طلبات المشاركة وإدارة المجلس.';
      el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=false;el('audioResume').hidden=true;audioRenderParticipants();
-     await audioLoadRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
+     await audioLoadRequests(created.id);audioWatchHostRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
    }catch(err){console.error('Audio start failed:',err);el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
    finally{btn.disabled=false}
  }
