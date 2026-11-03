@@ -836,9 +836,9 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
    try{
      const user=await audioUser();
      const {data:room,error}=await supabaseClient.from('audio_rooms').select('id,title,status,host_user_id').eq('id',roomId).maybeSingle();
-     if(error)throw error;if(!room||room.status!=='live')throw new Error('هذا المجلس غير متاح حاليًا.');
+     if(error)throw error;if(!room||(room.status!=='live'&&!(room.status==='paused'&&room.host_user_id===user.id)))throw new Error('هذا المجلس غير متاح حاليًا.');
      await audioConnect(roomId,room.host_user_id===user.id);currentAudioRoomRow=room;
-     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;await audioLoadRequests(roomId);audioRenderParticipants()}
+     if(room.host_user_id===user.id){el('audioHostStatus').textContent='أنتِ متصلة بمجلسك. يمكنك إدارة المتحدثين والبث.';el('audioEnd').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=room.status==='paused';el('audioResume').hidden=room.status!=='paused';el('audioPause').disabled=room.status!=='live';await audioLoadRequests(roomId);audioRenderParticipants()}
      else{el('audioHostStatus').textContent='أنت متصل كمستمع. يمكنك طلب المشاركة بالصوت.';el('audioStart').disabled=true;el('audioPause').disabled=true;el('audioEnd').disabled=true;el('audioRequests').innerHTML='<div class="audio-actions"><button class="primary" id="audioRequestSpeak" type="button">طلب المشاركة بالصوت</button></div>';el('audioRequestSpeak').addEventListener('click',()=>audioRequestSpeak(roomId));audioRenderParticipants()}
      audioMsg('تم الاتصال بالمجلس الصوتي.');
    }catch(err){console.error('Audio join failed:',err);audioMsg(err.message||'تعذر دخول المجلس الصوتي.')}
