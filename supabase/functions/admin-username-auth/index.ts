@@ -23,7 +23,7 @@ Deno.serve(async (req: Request) => {
     const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
 
     if (action === "get_username" || action === "set_username") {
-      const token = (req.headers.get("Authorization") || "").replace(/^Bearer\\s+/i, "");
+      const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
       if (!token) return json({ error: "سجّل الدخول أولًا." }, 401);
       const userClient = createClient(url, anon, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false } });
       const { data: auth, error: authError } = await userClient.auth.getUser(token);
