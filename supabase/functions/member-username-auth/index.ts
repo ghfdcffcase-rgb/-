@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.0";
 
 const allowedOrigins = new Set(["https://mithaq-platform.vercel.app", "https://mithaq-platform-ghfdcffcase-3079.vercel.app"]);
 const headers = {
-  "Access-Control-Allow-Origin": allowedOrigin,
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Vary": "Origin",
@@ -40,8 +40,7 @@ Deno.serve(async (req: Request) => {
       const { data: auth, error: authError } = await userClient.auth.getUser(token);
       if (authError || !auth.user) return respond({ error: "جلسة الدخول غير صالحة." }, 401);
       if (action === "get_username") {
-        const { data: current, error: readError } = await admin.from("member_usernames")
-          .select("username").eq("user_id", auth.user.id).maybeSingle();
+        const { data: current, error: readError } = await admin.from("member_usernames").select("username").eq("user_id", auth.user.id).maybeSingle();
         if (readError) return respond({ error: "تعذر قراءة اسم المستخدم." }, 500);
         return respond({ username: current?.username || "" });
       }
@@ -58,24 +57,16 @@ Deno.serve(async (req: Request) => {
 
     const username = String(body.username || "").trim().normalize("NFC");
     const password = String(body.password || "");
-    if (!validUsername(username) || password.length < 8 || password.length > 128) {
-      return respond({ error: genericError }, 401);
-    }
+    if (!validUsername(username) || password.length < 8 || password.length > 128) return respond({ error: genericError }, 401);
 
     if (action === "signup") {
       const email = `member-${crypto.randomUUID()}@mithaq.invalid`;
       const { data: created, error: createError } = await admin.auth.admin.createUser({
         email, password, email_confirm: true,
-        user_metadata: {
-          gender: String(body.gender || ""),
-          full_name: String(body.full_name || "").slice(0, 60),
-          auth_method: "username",
-        },
+        user_metadata: { gender: String(body.gender || ""), full_name: String(body.full_name || "").slice(0, 60), auth_method: "username" },
       });
       if (createError || !created.user) return respond({ error: "تعذر إنشاء الحساب. تحقق من البيانات وحاول مجددًا." }, 400);
-      const { error: insertError } = await admin.from("member_usernames").insert({
-        user_id: created.user.id, username,
-      });
+      const { error: insertError } = await admin.from("member_usernames").insert({ user_id: created.user.id, username });
       if (insertError) {
         await admin.auth.admin.deleteUser(created.user.id);
         return respond({ error: insertError.code === "23505" ? "اسم المستخدم مستخدم بالفعل." : "تعذر حفظ الحساب." }, insertError.code === "23505" ? 409 : 500);
@@ -84,8 +75,7 @@ Deno.serve(async (req: Request) => {
       return respond({ error: "طلب غير صالح." }, 400);
     }
 
-    const { data: row, error: lookupError } = await admin.from("member_usernames")
-      .select("user_id").eq("username_normalized", username.toLocaleLowerCase()).maybeSingle();
+    const { data: row, error: lookupError } = await admin.from("member_usernames").select("user_id").eq("username_normalized", username.toLocaleLowerCase()).maybeSingle();
     if (lookupError || !row) return respond({ error: genericError }, 401);
     const { data: userData, error: userError } = await admin.auth.admin.getUserById(row.user_id);
     if (userError || !userData.user?.email) return respond({ error: genericError }, 401);
@@ -100,11 +90,8 @@ Deno.serve(async (req: Request) => {
       return respond({ error: action === "signup" ? "تم إنشاء الحساب، لكن تعذر بدء الجلسة. حاول تسجيل الدخول." : genericError }, 401);
     }
     return respond({
-      access_token: session.access_token,
-      refresh_token: session.refresh_token,
-      expires_in: session.expires_in,
-      expires_at: session.expires_at,
-      token_type: session.token_type || "bearer",
+      access_token: session.access_token, refresh_token: session.refresh_token,
+      expires_in: session.expires_in, expires_at: session.expires_at, token_type: session.token_type || "bearer",
     });
   } catch (error) {
     console.error("member-username-auth failed:", error);
