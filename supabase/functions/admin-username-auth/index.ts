@@ -35,6 +35,9 @@ Deno.serve(async (req: Request) => {
       if (username.length < 2 || username.length > 40 || !/^[\p{L}\p{N} _.-]+$/u.test(username)) return json({ error: "اسم المستخدم يجب أن يكون من 2 إلى 40 حرفًا." }, 400);
       const { data: existing } = await admin.from("admin_users").select("user_id").in("role", ["manager", "manageress"]).eq("username", username).limit(1).maybeSingle();
       if (existing && existing.user_id !== auth.user.id) return json({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
+      const { data: memberName, error: memberNameError } = await admin.from("member_usernames").select("user_id").eq("username_normalized", username.toLowerCase()).limit(1).maybeSingle();
+      if (memberNameError) return json({ error: "تعذر التحقق من اسم المستخدم." }, 500);
+      if (memberName) return json({ error: "اسم المستخدم محجوز لحساب عضو." }, 409);
       const { error } = await admin.from("admin_users").update({ username }).eq("user_id", auth.user.id);
       if (error) return json({ error: "تعذر حفظ اسم المستخدم." }, 500);
       return json({ success: true, username });
