@@ -197,7 +197,7 @@ section{scroll-margin-top:90px}
 <p class="footer-note">ميثاق للتعارف الجاد. تُقيّد قاعدة البيانات الوصول إلى الملفات والرسائل حسب الصلاحيات، وتتحقق من أطراف الرسالة وقبول طلب التوافق قبل حفظها، كما يُسمح للحساب بتحديث وقت قراءة الإشعار فقط دون تغيير محتواه أو صاحبه. هذه النسخة تحتاج إلى اختبار عملي بحسابات حقيقية ومراجعة إعدادات النشر قبل الإطلاق، ولا يتم التحقق من الهوية تلقائيًا.</p>
 </div>
 <nav class="bottom-nav" aria-label="التنقل الرئيسي"><button class="nav-item active" data-page="homePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الرئيسية</span></button><button class="nav-item" data-page="matchmakersPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الخطّابات</span></button><button class="nav-item" data-page="audioPage"><span>◉</span><span>البث الصوتي</span></button><button class="nav-item" data-page="matchesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>التوافق</span></button><button class="nav-item" data-page="favoritesPage"><span>♡</span><span>المفضلة</span></button><button class="nav-item" data-page="notificationsPage"><span>♧</span><span>الإشعارات</span><b id="notificationCount" hidden></b></button><button class="nav-item" data-page="messagesPage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>المراسلات</span></button><button class="nav-item" data-page="profilePage"><img class="nav-thumb" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>ملفي</span></button><button class="nav-item" id="adminNavBtn" data-page="adminPage" hidden><img class="nav-thumb" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=120&h=120&q=65" alt="" loading="lazy"><span>الإدارة</span></button></nav>
-<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><div class="modal-head"><h3 id="modalTitle">إنشاء حساب في ميثاق</h3><button class="close" id="closeModal" aria-label="إغلاق">×</button></div><p class="hint">التسجيل متاح بالبريد أو الجوال. يلزم تفعيل مزود SMS في Supabase حتى تصل رموز التحقق.</p><form id="signupForm"><div class="form-grid"><div class="field full"><label for="signupEmail">البريد الإلكتروني</label><input id="signupEmail" type="email" required placeholder="name@example.com"></div><div class="field"><label for="signupPassword">كلمة المرور</label><input id="signupPassword" type="password" minlength="8" required placeholder="8 أحرف على الأقل"></div><div class="field full"><label for="manageressInviteCode">رمز تفعيل المديرة (اختياري)</label><input id="manageressInviteCode" type="password" autocomplete="off" placeholder="للمديرة فقط"><small class="hint">لا تدخلي الرمز إلا إذا كنتِ المديرة المعيّنة لميثاق.</small></div><div class="field"><label for="signupLanguage">لغة التطبيق</label><select id="signupLanguage"><option>العربية</option><option>English</option></select></div><div class="field full"><label><input type="checkbox" id="termsCheck" required style="width:auto"> أوافق على قواعد الاحترام والخصوصية، وأؤكد أن عمري 18 عامًا أو أكثر.</label></div></div><button class="primary" type="submit" style="width:100%;margin-top:15px">إنشاء حساب</button></form></div></div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><div class="modal-head"><h3 id="modalTitle">إنشاء حساب في ميثاق</h3><button class="close" id="closeModal" aria-label="إغلاق">×</button></div><p class="hint">يمكنك التسجيل بالبريد الإلكتروني أو اسم المستخدم أو رقم الجوال. يتطلب توثيق رقم الجوال تفعيل رسائل SMS في إعدادات الموقع.</p><form id="signupForm"><div class="form-grid"><div class="field full"><label for="signupEmail">البريد الإلكتروني</label><input id="signupEmail" type="email" required placeholder="name@example.com"></div><div class="field"><label for="signupPassword">كلمة المرور</label><input id="signupPassword" type="password" minlength="8" required placeholder="8 أحرف على الأقل"></div><div class="field full"><label for="manageressInviteCode">رمز تفعيل المديرة (اختياري)</label><input id="manageressInviteCode" type="password" autocomplete="off" placeholder="للمديرة فقط"><small class="hint">لا تدخلي الرمز إلا إذا كنتِ المديرة المعيّنة لميثاق.</small></div><div class="field"><label for="signupLanguage">لغة التطبيق</label><select id="signupLanguage"><option>العربية</option><option>English</option></select></div><div class="field full"><label><input type="checkbox" id="termsCheck" required style="width:auto"> أوافق على قواعد الاحترام والخصوصية، وأؤكد أن عمري 18 عامًا أو أكثر.</label></div></div><button class="primary" type="submit" style="width:100%;margin-top:15px">إنشاء حساب</button></form></div></div>
 <div class="modal-backdrop" id="chatBackdrop" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="modal"><div class="modal-head"><h3 id="chatTitle">المحادثة</h3><button class="close" id="closeChat" aria-label="إغلاق">×</button></div><div id="chatWindow" class="chat-window"><div class="hint">تظهر الرسائل بعد فتح محادثة مقبولة.</div></div><form id="sendForm" class="send-row"><input id="messageInput" required maxlength="2000" placeholder="اكتب رسالة محترمة…"><button class="primary" type="submit">إرسال</button></form><p class="hint">المراسلات مخصصة لطرفي طلب التوافق المقبول، وتخضع لصلاحيات قاعدة البيانات.</p></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
@@ -249,18 +249,18 @@ document.querySelectorAll('.home-category-card').forEach(card=>card.addEventList
 $('topJoin').addEventListener('click',openSignup);$('heroJoin').addEventListener('click',openSignup);$('browseBtn').addEventListener('click',()=>$('profileGrid').scrollIntoView({behavior:'smooth',block:'start'}));$('seeAll').addEventListener('click',()=>{selectedMode='الكل';$('marriageFilter').value='الكل';$('countryFilter').value='الكل';$('searchInput').value='';document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='الكل'));renderProfiles()});
 $('matchmakerProfileBtn').addEventListener('click',()=>showPage('profilePage'));
 $('matchmakerRegisterBtn').addEventListener('click',()=>registerMatchmaker());
-function filterMatchmakers(){const q=$('matchmakerSearch').value.trim().toLowerCase(),region=$('matchmakerRegion').value,type=$('matchmakerType').value;let count=0;document.querySelectorAll('#matchmakerDirectory .matchmaker-person').forEach(card=>{const show=(region==='الكل'||card.dataset.region===region)&&(type==='الكل'||card.dataset.types.split(' ').includes(type))&&card.dataset.search.toLowerCase().includes(q);card.style.display=show?'flex':'none';if(show)count++});$('matchmakerEmpty').style.display=count?'none':'block'}
+function filterMatchmakers(){const q=$('matchmakerSearch').value.trim().toLowerCase(),region=$('matchmakerRegion').value,type=$('matchmakerType').value;let count=0;document.querySelectorAll('#matchmakerDirectory .matchmaker-person').forEach(card=>{const show=(region==='الكل'||card.dataset.region===region)&&(type==='الكل'||card.dataset.types.split(' ').includes(type))&&card.dataset.search.toLowerCase().includes(q);card.style.display=show?'flex':'none';if(show)count++});const emptyState=$('matchmakerEmpty');if(emptyState)emptyState.style.display=count?'none':'block'}
 ['matchmakerSearch','matchmakerRegion','matchmakerType'].forEach(id=>$(id).addEventListener('input',filterMatchmakers));
 
 $('closeModal').addEventListener('click',()=>$('modalBackdrop').classList.remove('open'));$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))$('modalBackdrop').classList.remove('open')});$('closeChat').addEventListener('click',()=>$('chatBackdrop').classList.remove('open'));$('chatBackdrop').addEventListener('click',e=>{if(e.target===$('chatBackdrop'))$('chatBackdrop').classList.remove('open')});
-const signupEmail=$('signupEmail');signupEmail.required=false;const signupGrid=$('signupForm').querySelector('.form-grid');const emailField=signupEmail.closest('.field');const methodField=document.createElement('div');methodField.className='field full';methodField.innerHTML='<label for="signupMethod">طريقة التسجيل</label><select id="signupMethod"><option value="email">البريد الإلكتروني</option><option value="phone">رقم الجوال برمز تحقق</option></select>';signupGrid.prepend(methodField);const genderSignupField=document.createElement('div');genderSignupField.className='field full';genderSignupField.innerHTML='<label for="signupGender">أنا</label><select id="signupGender" required><option value="">اختر</option><option value="male">رجل</option><option value="female">امرأة</option></select>';methodField.after(genderSignupField);const phoneField=document.createElement('div');phoneField.className='field full';phoneField.hidden=true;phoneField.innerHTML='<label for="signupPhone">رقم الجوال مع مفتاح الدولة</label><input id="signupPhone" type="tel" autocomplete="tel" placeholder="مثال: +9665xxxxxxxx">';genderSignupField.after(phoneField);const otpField=document.createElement('div');otpField.className='field full';otpField.hidden=true;otpField.innerHTML='<label for="signupOtp">رمز التحقق المرسل إلى الجوال</label><input id="signupOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="أدخل رمز التحقق">';phoneField.after(otpField);const signupPhone=$('signupPhone');let phoneOtpPending=false;function updateSignupMethod(){const byPhone=$('signupMethod').value==='phone';emailField.hidden=byPhone;phoneField.hidden=!byPhone;otpField.hidden=!byPhone||!phoneOtpPending;signupEmail.required=!byPhone;signupPhone.required=byPhone} $('signupMethod').addEventListener('change',()=>{phoneOtpPending=false;$('signupOtp').required=false;$('signupForm').querySelector('button[type="submit"]').textContent='إنشاء حساب';updateSignupMethod()});updateSignupMethod();const profileGenderField=document.createElement('div');profileGenderField.className='field';profileGenderField.innerHTML='<label for="profileGender">الجنس</label><select id="profileGender" required><option value="">اختر</option><option value="male">رجل</option><option value="female">امرأة</option></select>';const profileFormGrid=$('profileForm').querySelector('.form-grid');profileFormGrid.insertBefore(profileGenderField,profileFormGrid.firstElementChild);const maritalField=document.createElement('div');maritalField.className='field';maritalField.innerHTML='<label for="maritalStatus">الحالة الاجتماعية</label><select id="maritalStatus" required><option value="single">أعزب / عزباء</option><option value="divorced">مطلق / مطلقة</option><option value="widowed">أرمل / أرملة</option><option value="married">متزوج / متزوجة</option></select>';profileGenderField.after(maritalField);const cityField=document.createElement('div');cityField.className='field';cityField.innerHTML='<label for="profileCity">المدينة (اختياري)</label><input id="profileCity" maxlength="80" placeholder="المدينة">';$('country').closest('.field').after(cityField);const privacyField=document.createElement('div');privacyField.className='field full';privacyField.innerHTML='<strong>الخصوصية والنشر</strong><label><input type="checkbox" id="publishProfile" checked style="width:auto"> إظهار ملفي للأعضاء المناسبين</label><label><input type="checkbox" id="showMyAge" checked style="width:auto"> إظهار عمري</label><label><input type="checkbox" id="showMyRegion" checked style="width:auto"> إظهار بلد الإقامة</label><label><input type="checkbox" id="showMyCity" checked style="width:auto"> إظهار المدينة</label><label><input type="checkbox" id="showMyNationality" checked style="width:auto"> إظهار الجنسية</label>';profileFormGrid.append(privacyField);
-$('signupForm').addEventListener('submit',async e=>{e.preventDefault();const gender=$('signupGender').value;const password=$('signupPassword').value;if(!gender){toast('اختر رجل أو امرأة أولًا.');return}const button=$('signupForm').querySelector('button[type="submit"]');button.disabled=true;try{if($('signupMethod').value==='phone'){const phone=signupPhone.value.trim();if(!phone){toast('أدخل رقم الجوال مع مفتاح الدولة.');return}if(!phoneOtpPending){const {error}=await supabaseClient.auth.signInWithOtp({phone,options:{shouldCreateUser:true,data:{gender}}});if(error)throw error;phoneOtpPending=true;$('signupOtp').required=true;updateSignupMethod();button.textContent='تأكيد رمز الجوال';toast('أرسلنا طلب رمز التحقق. إذا لم يصل، فقد يحتاج مزود الرسائل إلى التفعيل.');return}const {data,error}=await supabaseClient.auth.verifyOtp({phone,token:$('signupOtp').value.trim(),type:'sms'});if(error)throw error;if(!data.session)throw new Error('لم يكتمل التحقق. حاول مرة أخرى.');currentUserGender=gender;$('profileGender').value=gender;$('modalBackdrop').classList.remove('open');toast('تم التحقق وتسجيل الدخول.');showPage('homePage');renderProfiles();return}const {data,error}=await supabaseClient.auth.signUp({email:signupEmail.value.trim(),password,options:{data:{gender}}});if(error)throw error;if(data.session){let activated=false,activationWarning='';if($('manageressInviteCode').value.trim()){try{activated=await activateManageressFromForm()}catch(activationError){activationWarning='تم إنشاء الحساب، لكن تعذر تفعيل صلاحيات المديرة: '+(activationError.message||'تحقق من الرمز.')}}currentUserGender=gender;$('profileGender').value=gender;$('modalBackdrop').classList.remove('open');toast(activated?'تم تفعيل حسابك كمديرة وخطّابة معتمدة.':activationWarning||'تم إنشاء الحساب وتسجيل الدخول.');showPage('homePage');renderProfiles()}else{const {data:loginData,error:loginError}=await supabaseClient.auth.signInWithPassword({email:signupEmail.value.trim(),password});if(!loginError&&loginData?.session){currentUserGender=gender;$('profileGender').value=gender;$('modalBackdrop').classList.remove('open');toast('تم الدخول إلى ميثاق.');showPage('homePage');await loadOwnProfile();await renderProfiles()}else{toast('لم يكتمل الدخول. قد يكون تأكيد البريد مفعّلًا في إعدادات Supabase، أو أن البريد مسجل مسبقًا. استخدم تسجيل الدخول للحساب الموجود.')}}}catch(err){toast(err.message||'تعذر التسجيل. تحقق من البيانات والإعدادات.')}finally{button.disabled=false}});
+const signupEmail=$('signupEmail');signupEmail.required=false;const signupGrid=$('signupForm').querySelector('.form-grid');const emailField=signupEmail.closest('.field');const methodField=document.createElement('div');methodField.className='field full';methodField.innerHTML='<label for="signupMethod">طريقة التسجيل</label><select id="signupMethod"><option value="email">البريد الإلكتروني</option><option value="username">اسم المستخدم</option><option value="phone">رقم الجوال</option></select>';signupGrid.prepend(methodField);const genderSignupField=document.createElement('div');genderSignupField.className='field full';genderSignupField.innerHTML='<label for="signupGender">أنا</label><select id="signupGender" required><option value="">اختر</option><option value="male">رجل</option><option value="female">امرأة</option></select>';methodField.after(genderSignupField);const phoneField=document.createElement('div');phoneField.className='field full';phoneField.hidden=true;phoneField.innerHTML='<label for="signupPhone">رقم الجوال مع مفتاح الدولة</label><input id="signupPhone" type="tel" autocomplete="tel" placeholder="مثال: +9665xxxxxxxx">';genderSignupField.after(phoneField);const otpField=document.createElement('div');otpField.className='field full';otpField.hidden=true;otpField.innerHTML='<label for="signupOtp">رمز التحقق المرسل إلى الجوال</label><input id="signupOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="أدخل رمز التحقق">';phoneField.after(otpField);const signupPhone=$('signupPhone');let phoneOtpPending=false;function updateSignupMethod(){const byPhone=$('signupMethod').value==='phone';emailField.hidden=byPhone;phoneField.hidden=!byPhone;otpField.hidden=!byPhone||!phoneOtpPending;signupEmail.required=!byPhone;signupPhone.required=byPhone} $('signupMethod').addEventListener('change',()=>{phoneOtpPending=false;$('signupOtp').required=false;$('signupForm').querySelector('button[type="submit"]').textContent='إنشاء حساب';updateSignupMethod()});updateSignupMethod();const profileGenderField=document.createElement('div');profileGenderField.className='field';profileGenderField.innerHTML='<label for="profileGender">الجنس</label><select id="profileGender" required><option value="">اختر</option><option value="male">رجل</option><option value="female">امرأة</option></select>';const profileFormGrid=$('profileForm').querySelector('.form-grid');profileFormGrid.insertBefore(profileGenderField,profileFormGrid.firstElementChild);const maritalField=document.createElement('div');maritalField.className='field';maritalField.innerHTML='<label for="maritalStatus">الحالة الاجتماعية</label><select id="maritalStatus" required><option value="single">أعزب / عزباء</option><option value="divorced">مطلق / مطلقة</option><option value="widowed">أرمل / أرملة</option><option value="married">متزوج / متزوجة</option></select>';profileGenderField.after(maritalField);const cityField=document.createElement('div');cityField.className='field';cityField.innerHTML='<label for="profileCity">المدينة (اختياري)</label><input id="profileCity" maxlength="80" placeholder="المدينة">';$('country').closest('.field').after(cityField);const privacyField=document.createElement('div');privacyField.className='field full';privacyField.innerHTML='<strong>الخصوصية والنشر</strong><label><input type="checkbox" id="publishProfile" checked style="width:auto"> إظهار ملفي للأعضاء المناسبين</label><label><input type="checkbox" id="showMyAge" checked style="width:auto"> إظهار عمري</label><label><input type="checkbox" id="showMyRegion" checked style="width:auto"> إظهار بلد الإقامة</label><label><input type="checkbox" id="showMyCity" checked style="width:auto"> إظهار المدينة</label><label><input type="checkbox" id="showMyNationality" checked style="width:auto"> إظهار الجنسية</label>';profileFormGrid.append(privacyField);
+
 async function loadOwnProfile(){const {data:{user},error:authError}=await supabaseClient.auth.getUser();if(authError||!user)return;try{const {data,error}=await supabaseClient.rpc('get_my_profile');if(error)throw error;const p=Array.isArray(data)?data[0]:data;if(!p){currentUserGender=user.user_metadata?.gender||currentUserGender;if(currentUserGender)$('profileGender').value=currentUserGender;return}const set=(id,value)=>{if(value!==null&&value!==undefined&&$(id))$(id).value=String(value)};set('fullName',p.alias);set('age',p.age);set('profileGender',p.gender);set('nationality',p.nationality);set('country',p.region);set('profileCity',p.city);set('maritalStatus',p.marital_status);set('marriageType',({'announced':'معلن','misyar':'مسيار','both':'كلاهما'})[p.marriage_preference]||'معلن');set('about',p.bio||'');$('publishProfile').checked=p.is_visible!==false;$('showMyAge').checked=p.show_age!==false;$('showMyRegion').checked=p.show_region!==false;$('showMyCity').checked=p.show_city!==false;$('showMyNationality').checked=p.show_nationality!==false;currentUserGender=p.gender;profileSaved=true;$('profileStatus').textContent='تم تحميل ملفك المحفوظ. يمكنك تعديل بياناتك وإعدادات الخصوصية ثم الحفظ.'}catch(err){console.error('Loading own profile failed:',err);$('profileStatus').textContent='تعذر تحميل ملفك المحفوظ. قد تحتاج حماية قاعدة البيانات إلى الإعداد أولًا.'}}supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session?.user){currentUserGender=session.user.user_metadata?.gender||currentUserGender;if(currentUserGender)$('profileGender').value=currentUserGender;renderProfiles();setTimeout(()=>loadOwnProfile(),0)}});
  $('profileForm').addEventListener('submit',async e=>{e.preventDefault();const {data:{user},error:authError}=await supabaseClient.auth.getUser();if(authError||!user){toast('سجّل الدخول أولًا حتى نحفظ ملفك.');openSignup();return}const gender=$('profileGender').value;if(!gender){toast('اختر الجنس أولًا.');return}if(!$('adultConfirm').checked){toast('أكد أن عمرك 18 عامًا أو أكثر.');return}const payload={id:user.id,alias:$('fullName').value.trim(),age:Number($('age').value),gender,nationality:$('nationality').value.trim(),region:$('country').value.trim(),city:$('profileCity').value.trim()||'غير محدد',marital_status:$('maritalStatus').value,marriage_preference:({'معلن':'announced','مسيار':'misyar','كلاهما':'both'})[$('marriageType').value]||'announced',bio:$('about').value.trim()||null,is_visible:$('publishProfile').checked,show_age:$('showMyAge').checked,show_region:$('showMyRegion').checked,show_city:$('showMyCity').checked,show_nationality:$('showMyNationality').checked,updated_at:new Date().toISOString()};try{const {error}=await supabaseClient.rpc('save_my_profile',{profile_data:payload});if(error)throw error;profileSaved=true;currentUserGender=gender;$('profileStatus').textContent=payload.is_visible?'تم حفظ ملفك. سيظهر للأعضاء المناسبين وفق إعدادات الخصوصية.':'تم حفظ ملفك مخفيًا ولن يظهر في نتائج البحث.';toast('تم حفظ ملفك في قاعدة البيانات.');renderProfiles()}catch(err){$('profileStatus').textContent='تعذر الحفظ. قد تحتاج حماية قاعدة البيانات إلى الإعداد أولًا.';toast('تعذر حفظ الملف: '+(err.message||'خطأ غير معروف'))}});
 $('sendForm').addEventListener('submit',async e=>{e.preventDefault();const body=$('messageInput').value.trim();if(!activeRequestId||!activeRecipientId||!body)return;const {data:{user},error:authError}=await supabaseClient.auth.getUser();if(authError||!user){toast('سجّل الدخول أولًا.');return}const button=$('sendForm').querySelector('button[type="submit"]');button.disabled=true;try{const {error}=await supabaseClient.from('messages').insert({request_id:activeRequestId,sender_id:user.id,recipient_id:activeRecipientId,body});if(error)throw error;$('messageInput').value='';await openChat(activeRequestId,activeRecipientId,$('chatTitle').textContent.replace('محادثة مع ',''))}catch(err){console.error('Sending message failed:',err);toast('تعذر إرسال الرسالة. قد يحتاج جدول الرسائل وصلاحياته إلى الإعداد.')}finally{button.disabled=false}});
 renderProfiles();
 $('profileForm').addEventListener('submit',e=>{const alias=$('fullName').value.trim(),age=Number($('age').value),nationality=$('nationality').value.trim(),region=$('country').value.trim(),city=$('profileCity').value.trim(),bio=$('about').value.trim();let problem='';if(alias.length<2||alias.length>60)problem='اكتب اسم عرض من حرفين إلى 60 حرفًا.';else if(!Number.isInteger(age)||age<18||age>100)problem='يجب أن يكون العمر بين 18 و100 عامًا.';else if(nationality.length<1||nationality.length>60)problem='تحقق من إدخال الجنسية.';else if(region.length<1||region.length>80)problem='تحقق من إدخال بلد الإقامة.';else if(city.length>80||bio.length>500)problem='المدينة بحد أقصى 80 حرفًا والنبذة 500 حرف.';if(problem){e.preventDefault();e.stopImmediatePropagation();toast(problem)}},true);
-const authModeToggle=document.createElement('button');authModeToggle.type='button';authModeToggle.className='ghost';authModeToggle.style='width:100%;margin-top:10px';authModeToggle.textContent='ليس لديك حساب؟ إنشاء حساب';$('signupForm').append(authModeToggle);let loginMode=true;const genderFieldWrap=genderSignupField;const termsFieldWrap=$('termsCheck').closest('.field');function updateAuthMode(){const phoneMode=$('signupMethod').value==='phone';authModeToggle.hidden=false;genderFieldWrap.hidden=loginMode;termsFieldWrap.hidden=loginMode;$('signupGender').required=!loginMode;$('termsCheck').required=!loginMode;$('signupPassword').minLength=loginMode?0:8;$('signupForm').querySelector('button[type="submit"]').textContent=loginMode?'تسجيل الدخول':'إنشاء حساب';authModeToggle.textContent=loginMode?'ليس لديك حساب؟ إنشاء حساب':'لديك حساب؟ تسجيل الدخول';$('modalTitle').textContent=loginMode?'تسجيل الدخول إلى ميثاق':'إنشاء حساب في ميثاق'}authModeToggle.addEventListener('click',()=>{loginMode=!loginMode;updateAuthMode()});$('signupMethod').addEventListener('change',()=>{if($('signupMethod').value==='phone'&&loginMode){loginMode=false;updateAuthMode()}else updateAuthMode()});$('signupForm').addEventListener('submit',async e=>{if(!loginMode)return;e.preventDefault();e.stopImmediatePropagation();if($('signupMethod').value!=='email'){toast('تسجيل الدخول برمز الجوال متاح من خيار الجوال.');return}const button=$('signupForm').querySelector('button[type="submit"]');button.disabled=true;try{const {data,error}=await supabaseClient.auth.signInWithPassword({email:signupEmail.value.trim(),password:$('signupPassword').value});if(error)throw error;if(!data.session)throw new Error('لم يكتمل تسجيل الدخول.');let activated=false,activationWarning='';if($('manageressInviteCode').value.trim()){try{activated=await activateManageressFromForm()}catch(activationError){activationWarning='تم تسجيل الدخول، لكن تعذر تفعيل صلاحيات المديرة: '+(activationError.message||'تحقق من الرمز.')}}currentUserGender=data.user.user_metadata?.gender||null;if(currentUserGender)$('profileGender').value=currentUserGender;$('modalBackdrop').classList.remove('open');toast(activated?'تم تفعيل حسابك كمديرة وخطّابة معتمدة.':activationWarning||'تم تسجيل الدخول.');showPage('homePage');await loadOwnProfile();await renderProfiles()}catch(err){toast(err.message||'تعذر تسجيل الدخول. تحقق من البريد وكلمة المرور.')}finally{button.disabled=false}},true);updateAuthMode();
+
 $('signupForm').addEventListener('invalid',e=>{const field=e.target;toast(field.validationMessage||'أكمل الحقول المطلوبة وتحقق من كلمة المرور والموافقة.');},true);
 // Derive the chat recipient from the accepted request, never from a UI-supplied ID.
 const openChatWithValidatedRecipient = openChat;
@@ -452,25 +452,29 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   reset.type='button';reset.className='ghost';reset.textContent='نسيت كلمة المرور؟';reset.style.cssText='display:none;width:100%;margin-top:8px';
   form.after(reset);
   const method=$('signupMethod'),phoneField=$('signupPhone')?.closest('.field'),otpField=$('signupOtp')?.closest('.field');
+  const usernameField=document.createElement('div');usernameField.className='field full';usernameField.innerHTML='<label for="signupUsername">اسم المستخدم</label><input id="signupUsername" type="text" minlength="3" maxlength="30" autocomplete="username" autocapitalize="none" placeholder="مثال: mithaq_user">';method?.closest('.field')?.after(usernameField);
   function sync(){
     const phone=!['reset','recovery'].includes(mode)&&method?.value==='phone';
+    const username=!['reset','recovery'].includes(mode)&&method?.value==='username';
     if(title)title.textContent=mode==='signup'?'إنشاء حساب في ميثاق':mode==='login'?'تسجيل الدخول إلى ميثاق':mode==='recovery'?'تعيين كلمة مرور جديدة':'استعادة كلمة المرور';
     switcher.textContent=mode==='signup'?'لديك حساب بالفعل؟ تسجيل الدخول':'العودة إلى إنشاء حساب جديد';
     switcher.style.display=['reset','recovery'].includes(mode)?'none':'block';
     reset.style.display=!phone&&!['reset','recovery'].includes(mode)?'block':'none';
     if(method?.closest('.field'))method.closest('.field').hidden=['reset','recovery'].includes(mode);
-    if(emailField)emailField.hidden=phone||mode==='recovery';
+    if(emailField)emailField.hidden=phone||username||mode==='recovery';
     if(phoneField)phoneField.hidden=!phone;
+    if(usernameField)usernameField.hidden=!username;
+    const usernameInput=$('signupUsername');if(usernameInput)usernameInput.required=username;
     const phoneInput=$('signupPhone');if(phoneInput)phoneInput.required=phone;
     if(otpField)otpField.hidden=!phone||!otpSent;
-    if(passwordField){passwordField.hidden=phone||mode==='reset';password.required=!phone&&mode!=='reset';}
+    if(passwordField){passwordField.hidden=mode==='reset'||phone;password.required=!phone&&mode!=='reset';}
     if(passwordLabel)passwordLabel.textContent=mode==='recovery'?'كلمة المرور الجديدة':'كلمة المرور';
-    if(email){email.required=!phone&&mode!=='recovery';email.autocomplete=mode==='login'?'username':'email';}
+    if(email){email.required=!phone&&!username&&mode!=='recovery';email.autocomplete='email';}
     if(genderField){genderField.hidden=mode!=='signup';const g=$('signupGender');if(g)g.required=mode==='signup';}
     displayNameField.hidden=mode!=='signup';const displayName=$('signupDisplayName');if(displayName)displayName.required=mode==='signup';
     if(termsField){termsField.hidden=mode!=='signup';const t=$('termsCheck');if(t)t.required=mode==='signup';}
     const otp=$('signupOtp');if(otp)otp.required=phone&&otpSent;
-    submit.textContent=mode==='reset'?'إرسال رابط الاستعادة':mode==='recovery'?'حفظ كلمة المرور الجديدة':mode==='login'?(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز الجوال'):'تسجيل الدخول'):(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز التحقق'):'إنشاء حساب');
+    submit.textContent=mode==='reset'?'إرسال رابط الاستعادة':mode==='recovery'?'حفظ كلمة المرور الجديدة':mode==='login'?'تسجيل الدخول':(phone?'إرسال رمز التحقق':'إنشاء حساب');
   }
   function open(){mode='login';otpSent=false;clearSignupStatus();if($('signupOtp'))$('signupOtp').value='';sync();modal.classList.add('open')}
   window.openSignup=open;
@@ -480,15 +484,17 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   form.addEventListener('submit',async e=>{
     e.preventDefault();e.stopImmediatePropagation();
     const phoneMode=!['reset','recovery'].includes(mode)&&method?.value==='phone';
+    const usernameMode=!['reset','recovery'].includes(mode)&&method?.value==='username';
     if(mode==='signup'&&$('termsCheck')&&!$('termsCheck').checked){toast('وافق على الشروط وأكد أن عمرك 18 عامًا أو أكثر.');return}
     if(mode==='signup'&&!phoneMode&&!$('signupGender').value){toast('اختر الجنس أولًا.');return}
     if(mode==='signup'&&!$('signupDisplayName').value.trim()){toast('اكتب الاسم الذي سيظهر في الموقع.');return}
-    if(!phoneMode&&!['recovery'].includes(mode)){
+    if(!phoneMode&&!usernameMode&&!['recovery'].includes(mode)){
       const address=email.value.trim();
       if(!address||!email.checkValidity()){showSignupStatus('أدخل بريدًا إلكترونيًا صحيحًا.');toast('أدخل بريدًا إلكترونيًا صحيحًا.');return}
     }
+    const loginUsername=$('signupUsername').value.trim();const usernameValid=mode==='login'?(loginUsername.length>=2&&loginUsername.length<=40&&/^[\\p{L}\\p{N} _.-]+$/u.test(loginUsername)):/^[\\p{L}\\p{N}_][\\p{L}\\p{N}_.-]{2,29}$/u.test(loginUsername);if(usernameMode&&!usernameValid){showSignupStatus('اسم المستخدم غير صالح.');toast('تحقق من اسم المستخدم.');return}
     if(!phoneMode&&['signup','login'].includes(mode)&&password.value.length<8){showSignupStatus('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');return}
-    if(mode==='signup'&&$('manageressInviteCode')?.value.trim()&&phoneMode){toast('تفعيل حساب المديرة متاح حاليًا بالتسجيل بالبريد الإلكتروني.');return}
+    if(mode==='signup'&&$('manageressInviteCode')?.value.trim()&&(phoneMode||usernameMode)){toast('تفعيل صلاحيات المديرة يتم من حساب الإدارة المعتمد فقط.');return}
     if(phoneMode){
       const phone=$('signupPhone').value.trim();
       if(!/^\+[1-9]\d{7,14}$/.test(phone)){toast('أدخل رقم الجوال بصيغة دولية، مثل +9665xxxxxxxx.');return}
@@ -508,14 +514,44 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
       if(phoneMode){
         const phone=$('signupPhone').value.trim();
         if(!otpSent){
-          const options=mode==='signup'?{shouldCreateUser:true,data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}:{shouldCreateUser:false};
-          const {error}=await supabaseClient.auth.signInWithOtp({phone,options});if(error)throw error;
-          otpSent=true;sync();toast('تم طلب رمز التحقق. إذا لم تصل الرسالة، يلزم تفعيل مزود SMS في إعدادات Supabase.');return;
+          const options=mode==='signup'
+            ?{shouldCreateUser:true,data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}
+            :{shouldCreateUser:false};
+          const {error}=await supabaseClient.auth.signInWithOtp({phone,options});
+          if(error)throw error;
+          otpSent=true;sync();
+          toast(mode==='signup'?'أرسلنا رمز التحقق لإكمال إنشاء حسابك.':'أرسلنا رمز الدخول إلى جوالك.');
+          return;
         }
-        const {data,error}=await supabaseClient.auth.verifyOtp({phone,token:$('signupOtp').value.trim(),type:'sms'});if(error)throw error;if(!data.session)throw new Error('لم يكتمل تسجيل الدخول. تحقق من الرمز وحاول مجددًا.');
+        const completedMode=mode;
+        const {data,error}=await supabaseClient.auth.verifyOtp({phone,token:$('signupOtp').value.trim(),type:'sms'});
+        if(error)throw error;if(!data.session)throw new Error('لم يكتمل التحقق. تحقق من الرمز وحاول مجددًا.');
         currentUserGender=data.user?.user_metadata?.gender||$('signupGender')?.value||currentUserGender;
         if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
-        modal.classList.remove('open');toast(mode==='signup'?'تم إنشاء الحساب والتحقق من الجوال.':'تم تسجيل الدخول بنجاح.');showPage('homePage');await renderProfiles();return;
+        modal.classList.remove('open');
+        toast(completedMode==='signup'?'تم إنشاء الحساب والتحقق من الجوال.':'تم تسجيل الدخول برقم الجوال.');
+        showPage('homePage');await loadOwnProfile();await renderProfiles();return;
+      }
+      if(usernameMode){
+        let authResult;
+        const usernamePayload={action:mode,username:$('signupUsername').value.trim(),password:password.value,gender:$('signupGender')?.value||'',full_name:$('signupDisplayName')?.value.trim()||''};
+        if(mode==='login'){
+          authResult=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'login',username:usernamePayload.username,password:usernamePayload.password}});
+          if(authResult.error){
+            const status=authResult.error.context?.status||authResult.error.status;
+            if(status!==401&&status!==404)throw authResult.error;
+            authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+          }else if(authResult.data?.error){
+            throw new Error(authResult.data.error);
+          }
+        }else authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+        const {data,error}=authResult;
+        if(error)throw error;if(data?.error)throw new Error(data.error);
+        const {data:sessionData,error:sessionError}=await supabaseClient.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
+        if(sessionError)throw sessionError;if(!sessionData.session)throw new Error('تعذر بدء جلسة الحساب.');
+        currentUserGender=sessionData.user?.user_metadata?.gender||currentUserGender;
+        if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
+        modal.classList.remove('open');toast(mode==='signup'?'تم إنشاء الحساب باسم المستخدم.':'تم تسجيل الدخول باسم المستخدم.');showPage('homePage');await loadOwnProfile();await renderProfiles();return;
       }
       const submittedMode=mode;
       const address=email.value.trim(),secret=password.value;
@@ -523,6 +559,11 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         ?await supabaseClient.auth.signInWithPassword({email:address,password:secret})
         :await supabaseClient.auth.signUp({email:address,password:secret,options:{emailRedirectTo:window.location.origin,data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
+      if(submittedMode==='login'&&!result.data.session){
+        const restored=await supabaseClient.auth.getSession();
+        if(restored.error)throw restored.error;
+        if(!restored.data.session)throw new Error('تم التحقق من بيانات الدخول لكن لم تنشأ جلسة للموقع. سجّل الدخول مرة أخرى، وإذا تكرر الأمر فتحقق من إعدادات جلسات Supabase.');
+      }
       if(submittedMode==='signup'&&!result.data.session){
         const createdUser=result.data.user;
         if(createdUser&&Array.isArray(createdUser.identities)&&createdUser.identities.length===0){
@@ -913,9 +954,55 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  refreshRoleVisibility();activate('overview');
 })();
 </script>
-</body>
-</html>
-
+<script>
+// Account credentials: allow members to manage their username and password from their profile.
+(()=> {
+  const profile=document.getElementById('profilePage');
+  if(!profile || document.getElementById('accountCredentialsPanel')) return;
+  const panel=document.createElement('section');
+  panel.id='accountCredentialsPanel';
+  panel.className='form-panel';
+  panel.style.cssText='margin-top:18px';
+  panel.innerHTML='<div class="section-head"><div><h3>بيانات تسجيل الدخول</h3><p>حدّث اسم المستخدم أو كلمة المرور بأمان</p></div></div><form id="usernameSettingsForm" class="form-grid"><div class="field full"><label for="accountUsername">اسم المستخدم</label><input id="accountUsername" minlength="2" maxlength="40" autocomplete="username" placeholder="اسم من حرفين إلى 40 حرفًا"></div><div class="field full"><button class="ghost" type="submit">حفظ اسم المستخدم</button></div></form><form id="passwordSettingsForm" class="form-grid" style="margin-top:18px"><div class="field full"><label for="accountNewPassword">كلمة المرور الجديدة</label><input id="accountNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8 أحرف على الأقل" required></div><div class="field full"><button class="primary" type="submit">تحديث كلمة المرور</button></div></form><p id="accountCredentialsStatus" class="hint" aria-live="polite"></p>';
+  const profileForm=profile.querySelector('.form-panel');
+  profileForm?.after(panel);
+  const status=panel.querySelector('#accountCredentialsStatus');
+  const usernameInput=panel.querySelector('#accountUsername');
+  const load=async()=>{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session){panel.hidden=true;return;}
+    panel.hidden=false;
+    let result=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'get_username'}});
+    const adminDenied=result.error?.context?.status===403||result.error?.status===403;
+    if(adminDenied)result=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'get_username'}});
+    if(result.error){status.textContent=result.error.message||'تعذر قراءة اسم المستخدم.';return;}
+    if(result.data?.error){status.textContent=result.data.error;return;}
+    if(result.data?.username)usernameInput.value=result.data.username;
+  };
+  panel.querySelector('#usernameSettingsForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const username=usernameInput.value.trim();
+    if(username.length<2||username.length>40||!/^[\\p{L}\\p{N} _.-]+$/u.test(username)){status.textContent='اسم المستخدم من حرفين إلى 40 حرفًا.';return;}
+    const button=event.currentTarget.querySelector('button');button.disabled=true;
+    try{let result=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'set_username',username}});
+      const adminDenied=result.error?.context?.status===403||result.error?.status===403;
+      if(adminDenied)result=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'set_username',username}});
+      if(result.error)throw result.error;if(result.data?.error)throw new Error(result.data.error);status.textContent='تم حفظ اسم المستخدم. يمكنك استخدامه لتسجيل الدخول.';toast('تم تحديث اسم المستخدم.');
+    }catch(error){status.textContent=error.message||'تعذر تحديث اسم المستخدم.';}
+    finally{button.disabled=false;}
+  });
+  panel.querySelector('#passwordSettingsForm').addEventListener('submit',async event=>{
+    event.preventDefault();const input=panel.querySelector('#accountNewPassword');
+    if(input.value.length<8){status.textContent='كلمة المرور يجب أن تكون 8 أحرف على الأقل.';return;}
+    const button=event.currentTarget.querySelector('button');button.disabled=true;
+    try{const {error}=await supabaseClient.auth.updateUser({password:input.value});if(error)throw error;input.value='';status.textContent='تم تحديث كلمة المرور بنجاح.';toast('تم تحديث كلمة المرور.');
+    }catch(error){status.textContent=error.message||'تعذر تحديث كلمة المرور.';}
+    finally{button.disabled=false;}
+  });
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session)load();else panel.hidden=true;});
+  load();
+})();
+</script>
 <script>
 (function(){
  const el=id=>document.getElementById(id);
@@ -923,7 +1010,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
  async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
- async function audioInvoke(body){const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token)throw new Error('انتهت جلسة الدخول. سجّل الدخول مجددًا ثم حاول تشغيل البث.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
+ async function audioInvoke(body){let {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token){const refreshed=await supabaseClient.auth.refreshSession();if(refreshed.error)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');session=refreshed.data.session}if(!session?.access_token)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
  async function audioConnect(roomId,asHost){
    const data=await audioInvoke({action:'token',roomId});
    if(!data?.token||!data?.serverUrl)throw new Error('لم يصل رمز اتصال صالح من خادم البث.');
@@ -949,7 +1036,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      if(error)throw error;
      if(!data?.length){target.innerHTML='<div class="empty">لا توجد مجالس صوتية مباشرة حاليًا. ستظهر هنا المجالس التي تبدأها الخطّابات المعتمدات.</div>';return}
      const {data:{user}}=await supabaseClient.auth.getUser();
-     target.innerHTML=data.map(room=>'<article class="audio-room-card"><div class="audio-room-head"><strong>'+escapeHtml(room.title||'مجلس ميثاق الصوتي')+'</strong><span class="audio-live-pill">'+(room.status==='live'?'● مباشر الآن':'◷ متوقف مؤقتًا')+'</span></div><div class="audio-muted">'+(room.status==='live'?'المجلس متاح للاستماع.':'المجلس متوقف مؤقتًا من المضيفة.')+'</div><div class="audio-actions">'+(room.status==='live'?'<button class="primary" type="button" data-audio-join="'+room.id+'">'+(user?.id===room.host_user_id?'العودة إلى بثي':'دخول للاستماع')+'</button>':'<button class="ghost" type="button" disabled>البث متوقف مؤقتًا</button>')+'</div></article>').join('');
+     target.innerHTML=data.map(room=>'<article class="audio-room-card"><div class="audio-room-head"><strong>'+escapeHtml(room.title||'مجلس ميثاق الصوتي')+'</strong><span class="audio-live-pill">'+(room.status==='live'?'● مباشر الآن':'◷ متوقف مؤقتًا')+'</span></div><div class="audio-muted">'+(room.status==='live'?'المجلس متاح للاستماع.':'المجلس متوقف مؤقتًا من المضيفة.')+'</div><div class="audio-actions">'+((room.status==='live'||user?.id===room.host_user_id)?'<button class="primary" type="button" data-audio-join="'+room.id+'">'+(user?.id===room.host_user_id?(room.status==='paused'?'العودة لإدارة المجلس المتوقف':'العودة إلى بثي'):'دخول للاستماع')+'</button>':'<button class="ghost" type="button" disabled>البث متوقف مؤقتًا</button>')+'</div></article>').join('');
      target.querySelectorAll('[data-audio-join]').forEach(btn=>btn.addEventListener('click',()=>audioJoinRoom(btn.dataset.audioJoin)));
    }catch(err){console.error('Audio rooms load failed:',err);target.innerHTML='<div class="empty">تعذر تحميل المجالس. '+escapeHtml(err.message||'تحقق من تسجيل الدخول والاتصال.')+'</div>'}
    finally{audioRefreshBusy=false}
@@ -1034,7 +1121,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
      el('audioHostStatus').textContent='البث مباشر الآن. يمكنك استقبال طلبات المشاركة وإدارة المجلس.';
      el('audioEnd').disabled=false;el('audioPause').disabled=false;el('audioStart').disabled=true;el('audioPause').hidden=false;el('audioResume').hidden=true;audioRenderParticipants();
      await audioLoadRequests(created.id);audioWatchHostRequests(created.id);await audioRefreshRooms();audioMsg('بدأ البث الصوتي.');
-   }catch(err){console.error('Audio start failed:',err);if(createdRoom?.id){try{await supabaseClient.from('audio_rooms').update({status:'ended'}).eq('id',createdRoom.id).eq('host_user_id',createdRoom.host_user_id)}catch(cleanupError){console.warn('Audio room cleanup failed:',cleanupError)}}currentAudioRoomRow=null;el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
+   }catch(err){console.error('Audio start failed:',err);if(createdRoom?.id){try{await supabaseClient.from('audio_rooms').update({status:'ended'}).eq('id',createdRoom.id).eq('host_user_id',createdRoom.host_user_id)}catch(cleanupError){console.warn('Audio room cleanup failed:',cleanupError)}try{await audioDisconnect()}catch(cleanupAudioError){console.warn('Audio connection cleanup failed:',cleanupAudioError)}}currentAudioRoomRow=null;el('audioHostStatus').textContent='تعذر بدء البث: '+(err.message||'تحقق من اعتماد حساب الخطّابة وإعدادات البث.');audioMsg(err.message||'تعذر بدء البث.')}
    finally{btn.disabled=false}
  }
  async function audioRenderParticipants(){
@@ -1124,3 +1211,6 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
   });
 })();
 </script>
+
+</body>
+</html>
