@@ -30,7 +30,7 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const action = String(body.action || "login");
 
-    if (action === "set_username") {
+    if (action === "get_username" || action === "set_username") {
       const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
       if (!token) return json({ error: "سجّل الدخول أولًا." }, 401);
       const userClient = createClient(url, anon, {
@@ -39,6 +39,12 @@ Deno.serve(async (req: Request) => {
       });
       const { data: auth, error: authError } = await userClient.auth.getUser(token);
       if (authError || !auth.user) return json({ error: "جلسة الدخول غير صالحة." }, 401);
+      if (action === "get_username") {
+        const { data: current, error: readError } = await admin.from("member_usernames")
+          .select("username").eq("user_id", auth.user.id).maybeSingle();
+        if (readError) return json({ error: "تعذر قراءة اسم المستخدم." }, 500);
+        return json({ username: current?.username || "" });
+      }
       const username = String(body.username || "").trim().normalize("NFC");
       if (!validUsername(username)) return json({ error: "اسم المستخدم من 3 إلى 30 حرفًا، ويقبل الحروف والأرقام و _ . -" }, 400);
       const { error } = await admin.from("member_usernames").upsert(
