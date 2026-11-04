@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: genericError }, 401);
     }
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const key = ip + ":" + username.toLocaleLowerCase();
+    const key = ip + ":" + username.toLowerCase();
     const now = Date.now();
     const record = attempts.get(key);
     if (record && record.reset > now && record.count >= 8) return json({ error: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا." }, 429);
