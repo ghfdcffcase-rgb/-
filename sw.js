@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mithaq-shell-v4';
+const CACHE_NAME = 'mithaq-shell-v5';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './assets/icon.svg'];
 
 self.addEventListener('install', (event) => {
