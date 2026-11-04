@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
     if (!record || record.reset <= now) attempts.set(key, { count: 1, reset: now + 10 * 60 * 1000 });
     else record.count++;
 
-    const { data: row, error: lookupError } = await admin.from("admin_users").select("user_id").eq("username", username).limit(1).maybeSingle();
+    const { data: row, error: lookupError } = await admin.from("admin_users").select("user_id").in("role", ["manager", "manageress"]).eq("username", username).limit(1).maybeSingle();
     if (lookupError || !row) return json({ error: genericError }, 401);
     const { data: userData, error: userError } = await admin.auth.admin.getUserById(row.user_id);
     if (userError || !userData.user?.email) return json({ error: genericError }, 401);
