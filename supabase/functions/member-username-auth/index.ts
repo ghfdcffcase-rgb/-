@@ -9,6 +9,25 @@ const headers = {
   "Content-Type": "application/json",
 };
 const genericError = "اسم المستخدم أو كلمة المرور غير صحيحة.";
+
+// Best-effort per-instance throttling. Keep the map bounded; production should
+// additionally use a shared rate limiter (for example, an atomic database/Redis counter).
+const attempts = new Map<string, { count: number; reset: number }>();
+function isRateLimited(key: string, limit: number, windowMs: number): boolean {
+  const now = Date.now();
+  if (attempts.size > 5000) {
+    for (const [entryKey, entry] of attempts) {
+      if (entry.reset <= now) attempts.delete(entryKey);
+    }
+  }
+  const current = attempts.get(key);
+  if (!current || current.reset <= now) {
+    attempts.set(key, { count: 1, reset: now + windowMs });
+    return false;
+  }
+  current.count += 1;
+  return current.count > limit;
+}
 const validUsername = (value: string) =>
   value.length >= 3 && value.length <= 30 &&
   /^[\p{L}\p{N}_][\p{L}\p{N}_.-]*$/u.test(value);
@@ -57,6 +76,14 @@ Deno.serve(async (req: Request) => {
 
     const username = String(body.username || "").trim().normalize("NFC");
     const password = String(body.password || "");
+    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const normalizedUsername = username.toLowerCase();
+    if (action === "signup" && isRateLimited("signup:" + ip, 5, 60 * 60 * 1000)) {
+      return respond({ error: "تم تجاوز عدد محاولات إنشاء الحساب. حاول لاحقًا." }, 429);
+    }
+    if (action === "login" && isRateLimited("login:" + ip + ":" + normalizedUsername, 8, 10 * 60 * 1000)) {
+      return respond({ error: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا." }, 429);
+    }
     if (!validUsername(username) || password.length < 8 || password.length > 128) return respond({ error: genericError }, 401);
 
     if (action === "signup") {
