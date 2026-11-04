@@ -423,6 +423,10 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   const form=document.getElementById('signupForm');
   const modal=document.getElementById('modalBackdrop');
   if(!form||!modal||!window.supabase)return;
+  // This form switches between signup, login, recovery and phone OTP.
+  // Disable browser-native validation because hidden mode-specific fields
+  // can otherwise silently prevent the submit event from reaching the handler.
+  form.noValidate=true;
   const $=id=>document.getElementById(id);
   const title=$('modalTitle'),email=$('signupEmail'),password=$('signupPassword'),passwordLabel=password.closest('.field')?.querySelector('label');
   const emailField=email.closest('.field'),passwordField=password.closest('.field');
@@ -479,6 +483,11 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
     if(mode==='signup'&&$('termsCheck')&&!$('termsCheck').checked){toast('وافق على الشروط وأكد أن عمرك 18 عامًا أو أكثر.');return}
     if(mode==='signup'&&!phoneMode&&!$('signupGender').value){toast('اختر الجنس أولًا.');return}
     if(mode==='signup'&&!$('signupDisplayName').value.trim()){toast('اكتب الاسم الذي سيظهر في الموقع.');return}
+    if(!phoneMode&&!['recovery'].includes(mode)){
+      const address=email.value.trim();
+      if(!address||!email.checkValidity()){showSignupStatus('أدخل بريدًا إلكترونيًا صحيحًا.');toast('أدخل بريدًا إلكترونيًا صحيحًا.');return}
+    }
+    if(!phoneMode&&['signup','login'].includes(mode)&&password.value.length<8){showSignupStatus('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');return}
     if(mode==='signup'&&$('manageressInviteCode')?.value.trim()&&phoneMode){toast('تفعيل حساب المديرة متاح حاليًا بالتسجيل بالبريد الإلكتروني.');return}
     if(phoneMode){
       const phone=$('signupPhone').value.trim();
