@@ -523,6 +523,11 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         ?await supabaseClient.auth.signInWithPassword({email:address,password:secret})
         :await supabaseClient.auth.signUp({email:address,password:secret,options:{emailRedirectTo:window.location.origin,data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
+      if(submittedMode==='login'&&!result.data.session){
+        const restored=await supabaseClient.auth.getSession();
+        if(restored.error)throw restored.error;
+        if(!restored.data.session)throw new Error('تم التحقق من بيانات الدخول لكن لم تنشأ جلسة للموقع. سجّل الدخول مرة أخرى، وإذا تكرر الأمر فتحقق من إعدادات جلسات Supabase.');
+      }
       if(submittedMode==='signup'&&!result.data.session){
         const createdUser=result.data.user;
         if(createdUser&&Array.isArray(createdUser.identities)&&createdUser.identities.length===0){
@@ -923,7 +928,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
  async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
- async function audioInvoke(body){const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token)throw new Error('انتهت جلسة الدخول. سجّل الدخول مجددًا ثم حاول تشغيل البث.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
+ async function audioInvoke(body){let {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token){const refreshed=await supabaseClient.auth.refreshSession();if(refreshed.error)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');session=refreshed.data.session}if(!session?.access_token)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
  async function audioConnect(roomId,asHost){
    const data=await audioInvoke({action:'token',roomId});
    if(!data?.token||!data?.serverUrl)throw new Error('لم يصل رمز اتصال صالح من خادم البث.');
