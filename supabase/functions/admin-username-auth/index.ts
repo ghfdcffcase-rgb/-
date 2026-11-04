@@ -54,6 +54,14 @@ Deno.serve(async (req: Request) => {
         if (entry.reset <= now) attempts.delete(entryKey);
       }
     }
+    const ipKey = ip + ":__ip__";
+    const ipRecord = attempts.get(ipKey);
+    if (ipRecord && ipRecord.reset > now && ipRecord.count >= 30) {
+      return json({ error: "محاولات كثيرة من هذا الاتصال. انتظر قليلًا ثم حاول مجددًا." }, 429);
+    }
+    if (!ipRecord || ipRecord.reset <= now) attempts.set(ipKey, { count: 1, reset: now + 10 * 60 * 1000 });
+    else ipRecord.count++;
+
     const record = attempts.get(key);
     if (record && record.reset > now && record.count >= 8) return json({ error: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا." }, 429);
     if (!record || record.reset <= now) attempts.set(key, { count: 1, reset: now + 10 * 60 * 1000 });
