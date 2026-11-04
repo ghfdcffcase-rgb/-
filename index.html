@@ -941,6 +941,49 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  refreshRoleVisibility();activate('overview');
 })();
 </script>
+<script>
+// Account credentials: allow members to manage their username and password from their profile.
+(()=> {
+  const profile=document.getElementById('profilePage');
+  if(!profile || document.getElementById('accountCredentialsPanel')) return;
+  const panel=document.createElement('section');
+  panel.id='accountCredentialsPanel';
+  panel.className='form-panel';
+  panel.style.cssText='margin-top:18px';
+  panel.innerHTML='<div class="section-head"><div><h3>بيانات تسجيل الدخول</h3><p>حدّث اسم المستخدم أو كلمة المرور بأمان</p></div></div><form id="usernameSettingsForm" class="form-grid"><div class="field full"><label for="accountUsername">اسم المستخدم</label><input id="accountUsername" minlength="3" maxlength="30" autocomplete="username" placeholder="3 إلى 30 حرفًا دون مسافات"></div><div class="field full"><button class="ghost" type="submit">حفظ اسم المستخدم</button></div></form><form id="passwordSettingsForm" class="form-grid" style="margin-top:18px"><div class="field full"><label for="accountNewPassword">كلمة المرور الجديدة</label><input id="accountNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8 أحرف على الأقل" required></div><div class="field full"><button class="primary" type="submit">تحديث كلمة المرور</button></div></form><p id="accountCredentialsStatus" class="hint" aria-live="polite"></p>';
+  const profileForm=profile.querySelector('.form-panel');
+  profileForm?.after(panel);
+  const status=panel.querySelector('#accountCredentialsStatus');
+  const usernameInput=panel.querySelector('#accountUsername');
+  const load=async()=>{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session){panel.hidden=true;return;}
+    panel.hidden=false;
+    const {data,error}=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'get_username'}});
+    if(!error&&data?.username)usernameInput.value=data.username;
+  };
+  panel.querySelector('#usernameSettingsForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const username=usernameInput.value.trim();
+    if(!/^[\\p{L}\\p{N}_][\\p{L}\\p{N}_.-]{2,29}$/u.test(username)){status.textContent='اسم المستخدم من 3 إلى 30 حرفًا، دون مسافات.';return;}
+    const button=event.currentTarget.querySelector('button');button.disabled=true;
+    try{const {data,error}=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'set_username',username}});
+      if(error)throw error;if(data?.error)throw new Error(data.error);status.textContent='تم حفظ اسم المستخدم. يمكنك استخدامه لتسجيل الدخول.';toast('تم تحديث اسم المستخدم.');
+    }catch(error){status.textContent=error.message||'تعذر تحديث اسم المستخدم.';}
+    finally{button.disabled=false;}
+  });
+  panel.querySelector('#passwordSettingsForm').addEventListener('submit',async event=>{
+    event.preventDefault();const input=panel.querySelector('#accountNewPassword');
+    if(input.value.length<8){status.textContent='كلمة المرور يجب أن تكون 8 أحرف على الأقل.';return;}
+    const button=event.currentTarget.querySelector('button');button.disabled=true;
+    try{const {error}=await supabaseClient.auth.updateUser({password:input.value});if(error)throw error;input.value='';status.textContent='تم تحديث كلمة المرور بنجاح.';toast('تم تحديث كلمة المرور.');
+    }catch(error){status.textContent=error.message||'تعذر تحديث كلمة المرور.';}
+    finally{button.disabled=false;}
+  });
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session)load();else panel.hidden=true;});
+  load();
+})();
+</script>
 </body>
 </html>
 
