@@ -33,8 +33,9 @@ Deno.serve(async (req: Request) => {
       if (action === "get_username") return json({ username: role.username || "" });
       const username = String(body.username || "").trim().normalize("NFC");
       if (username.length < 2 || username.length > 40 || !/^[\p{L}\p{N} _.-]+$/u.test(username)) return json({ error: "اسم المستخدم يجب أن يكون من 2 إلى 40 حرفًا." }, 400);
-      const { data: existing } = await admin.from("admin_users").select("user_id").in("role", ["manager", "manageress"]).eq("username", username).limit(1).maybeSingle();
-      if (existing && existing.user_id !== auth.user.id) return json({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
+      const { data: existingRows, error: existingError } = await admin.from("admin_users").select("user_id,username").in("role", ["manager", "manageress"]);
+      if (existingError) return json({ error: "تعذر التحقق من اسم المستخدم." }, 500);
+      if ((existingRows || []).some((row) => row.user_id !== auth.user.id && String(row.username || "").toLowerCase() === username.toLowerCase())) return json({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
       const { data: memberName, error: memberNameError } = await admin.from("member_usernames").select("user_id").eq("username_normalized", username.toLowerCase()).limit(1).maybeSingle();
       if (memberNameError) return json({ error: "تعذر التحقق من اسم المستخدم." }, 500);
       if (memberName) return json({ error: "اسم المستخدم محجوز لحساب عضو." }, 409);
