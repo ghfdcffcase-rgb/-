@@ -974,8 +974,8 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
     let result=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'get_username'}});
     const adminDenied=result.error?.context?.status===403||result.error?.status===403;
     if(adminDenied)result=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'get_username'}});
-    if(result.error)throw result.error;
-    if(result.data?.error)throw new Error(result.data.error);
+    if(result.error){status.textContent=result.error.message||'تعذر قراءة اسم المستخدم.';return;}
+    if(result.data?.error){status.textContent=result.data.error;return;}
     if(result.data?.username)usernameInput.value=result.data.username;
   };
   panel.querySelector('#usernameSettingsForm').addEventListener('submit',async event=>{
