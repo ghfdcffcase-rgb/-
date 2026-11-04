@@ -536,7 +536,13 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         const usernamePayload={action:mode,username:$('signupUsername').value.trim(),password:password.value,gender:$('signupGender')?.value||'',full_name:$('signupDisplayName')?.value.trim()||''};
         if(mode==='login'){
           authResult=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'login',username:usernamePayload.username,password:usernamePayload.password}});
-          if(authResult.error||authResult.data?.error)authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+          if(authResult.error){
+            const status=authResult.error.context?.status||authResult.error.status;
+            if(status!==401&&status!==404)throw authResult.error;
+            authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+          }else if(authResult.data?.error){
+            throw new Error(authResult.data.error);
+          }
         }else authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
         const {data,error}=authResult;
         if(error)throw error;if(data?.error)throw new Error(data.error);
