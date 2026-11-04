@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.0";
 
-const allowedOrigin = "https://mithaq-platform.vercel.app";
+const allowedOrigins = new Set(["https://mithaq-platform.vercel.app", "https://mithaq-platform-ghfdcffcase-3079.vercel.app"]);
 const headers = {
   "Access-Control-Allow-Origin": allowedOrigin,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -8,18 +8,19 @@ const headers = {
   "Vary": "Origin",
   "Content-Type": "application/json",
 };
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers });
+let activeHeaders = headers;
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: activeHeaders });
 const genericError = "اسم المستخدم أو كلمة المرور غير صحيحة.";
 const validUsername = (value: string) =>
   value.length >= 3 && value.length <= 30 &&
   /^[\p{L}\p{N}_][\p{L}\p{N}_.-]*$/u.test(value);
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: responseHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (req.headers.get("origin") && req.headers.get("origin") !== allowedOrigin) {
-    return json({ error: "Origin not allowed" }, 403);
-  }
+  const origin = req.headers.get("origin");
+  if (origin && !allowedOrigins.has(origin)) return json({ error: "Origin not allowed" }, 403);
+  activeHeaders = origin ? { ...headers, "Access-Control-Allow-Origin": origin } : headers;
 
   try {
     const url = Deno.env.get("SUPABASE_URL");
