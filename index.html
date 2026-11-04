@@ -131,6 +131,23 @@ section{scroll-margin-top:90px}
  #homePage .hero h2{font-size:31px}
 }
 
+
+/* Homepage category tiles inspired by the supplied MITHAQ reference */
+#homePage .home-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 28px}
+#homePage .home-category-card{position:relative;display:block;overflow:hidden;padding:0;border:3px solid #fff8eb;border-radius:3px;min-height:310px;aspect-ratio:1.04/1;background:#4b171e;box-shadow:0 8px 24px rgba(67,30,25,.13);text-align:initial;color:#fff;isolation:isolate}
+#homePage .home-category-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,13,15,.02) 35%,rgba(35,13,15,.30) 68%,rgba(35,13,15,.56));z-index:-0;pointer-events:none}
+#homePage .home-category-card>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease;z-index:-1}
+#homePage .home-category-card:hover>img{transform:scale(1.045)}
+#homePage .home-category-label{position:absolute;left:7%;right:7%;bottom:6%;min-height:78px;display:flex;align-items:center;gap:15px;padding:12px 16px;border:2px solid #c79a54;border-radius:25px;background:linear-gradient(110deg,#f8ead1,#fff8eb);color:#641b25;box-shadow:0 5px 18px #24100c55}
+#homePage .home-category-label.dark{background:linear-gradient(110deg,#641923,#42121b);color:#fff4dc;border-color:#d2a65e}
+#homePage .home-category-icon{flex:0 0 54px;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#700d2c;color:#f4d18b;border:2px solid #d7ad65;font-size:29px;line-height:1}
+#homePage .home-category-label.dark .home-category-icon{background:#4e101b;border-color:#e3bd78}
+#homePage .home-category-label strong{display:block;font-size:clamp(15px,1.55vw,22px);font-weight:800;line-height:1.4}
+#homePage .home-category-label small{display:block;margin-top:5px;color:#98683d;font-size:12px;line-height:1.5}
+#homePage .home-category-label.dark small{color:#e8d2aa}
+@media(max-width:760px){#homePage .home-category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#homePage .home-category-card{min-height:205px;aspect-ratio:.82/1;border-width:2px}#homePage .home-category-label{left:5%;right:5%;bottom:5%;min-height:59px;padding:8px;gap:8px;border-radius:18px}#homePage .home-category-icon{flex-basis:39px;width:39px;height:39px;font-size:22px}#homePage .home-category-label strong{font-size:13px}#homePage .home-category-label small{font-size:10px;margin-top:3px}}
+@media(max-width:390px){#homePage .home-category-grid{grid-template-columns:1fr}#homePage .home-category-card{min-height:230px;aspect-ratio:1.25/1}}
+
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -145,8 +162,15 @@ section{scroll-margin-top:90px}
 <main>
 <section id="homePage" class="page active">
   <div class="hero"><div><div class="eyebrow">علاقة جادة تبدأ باختيار واعٍ</div><h2>حين تتوافق القلوب،<br>يبدأ <span style="color:#e0c17d">الميثاق</span></h2><p>مساحة راقية للباحثين عن شريك حياة، للزواج المعلن أو المسيار، باحترام ووضوح وخصوصية في كل خطوة.</p><div class="hero-actions"><button class="primary" id="heroJoin">ابدأ رحلتك ←</button><button class="ghost" id="browseBtn">استكشف الملفات</button></div></div><div class="hero-side"><div class="hero-photo-frame"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=85" alt="أجواء زفاف راقية ترمز لبداية حياة مشتركة" fetchpriority="high"><div class="seal"><div class="seal-inner"><strong>م</strong><span>MITHAQ</span></div></div><div class="hero-photo-caption"><strong>خطوة جادة نحو الاستقرار</strong><span>تعارف باحترام ووضوح، وخصوصية في كل مرحلة.</span></div></div></div></div>
-  <div class="section-head"><div><h3>اختر مسار التوافق</h3><p>حدد نوع الزواج الذي تبحث عنه</p></div></div>
-  <div class="modes"><button class="mode active" data-mode="الكل"><img class="mode-photo" src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=75" alt="أجواء ارتباط" loading="lazy"><div class="mode-icon">◇</div><strong>جميع المسارات</strong><small>اكتشف الملفات المناسبة لك</small></button><button class="mode" data-mode="معلن"><img class="mode-photo" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=75" alt="احتفال زواج" loading="lazy"><div class="mode-icon">♧</div><strong>الزواج المعلن</strong><small>بناء أسرة على الوضوح والالتزام</small></button><button class="mode" data-mode="مسيار"><img class="mode-photo" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=75" alt="شراكة ومودة" loading="lazy"><div class="mode-icon">✧</div><strong>زواج المسيار</strong><small>توافق واضح مع احترام خصوصية الطرفين</small></button></div>
+  <div class="section-head"><div><h3>أقسام ميثاق</h3><p>اختر القسم المناسب وابدأ رحلتك بخطوات واضحة وخصوصية تامة</p></div></div>
+  <div class="home-category-grid" aria-label="أقسام الموقع">
+    <button class="home-category-card" type="button" data-home-action="home"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=85" alt="زهور وخواتم زواج" loading="lazy"><span class="home-category-label"><span class="home-category-icon">⌂</span><span><strong>الرئيسية</strong><small>بداية لحياة أجمل</small></span></span></button>
+    <button class="home-category-card" type="button" data-home-action="announced"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85" alt="قاعة زفاف أنيقة" loading="lazy"><span class="home-category-label"><span class="home-category-icon">♧</span><span><strong>الزواج المعلن</strong><small>بكل وضوح وطمأنينة</small></span></span></button>
+    <button class="home-category-card" type="button" data-home-action="misyar"><img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=85" alt="رمز المودة والارتباط" loading="lazy"><span class="home-category-label"><span class="home-category-icon">♡</span><span><strong>زواج المسيار</strong><small>مرونة واحترام للظروف</small></span></span></button>
+    <button class="home-category-card" type="button" data-home-action="search"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85" alt="أفق مفتوح" loading="lazy"><span class="home-category-label dark"><span class="home-category-icon">⌕</span><span><strong>البحث والتوافق</strong><small>لتجد الشريك المناسب</small></span></span></button>
+    <button class="home-category-card" type="button" data-home-action="matchmakers"><img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1000&q=85" alt="لقاء ومساندة" loading="lazy"><span class="home-category-label"><span class="home-category-icon">♧</span><span><strong>الخطّابات والوساطة</strong><small>خبرة وثقة واختيار أمثل</small></span></span></button>
+    <button class="home-category-card" type="button" data-home-action="profile"><img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1000&q=85" alt="تفاصيل أنيقة ودافئة" loading="lazy"><span class="home-category-label dark"><span class="home-category-icon">♙</span><span><strong>ملفي الشخصي</strong><small>هويتك بأمان وخصوصية</small></span></span></button>
+  </div>
   <div class="section-head"><div><h3>اقتراحات قد تناسبك</h3><p>ملفات الأعضاء المنشورة في ميثاق</p></div><button class="text-btn" id="seeAll">عرض الكل ←</button></div>
   <div class="filters"><input id="searchInput" placeholder="ابحث حسب البلد أو الجنسية…"><select id="marriageFilter"><option value="الكل">كل أنواع الزواج</option><option value="معلن">معلن</option><option value="مسيار">مسيار</option></select><select id="countryFilter"><option value="الكل">كل البلدان</option><option>السعودية</option><option>مصر</option><option>الأردن</option><option>المغرب</option></select></div>
   <div id="profileGrid" class="profiles"></div>
@@ -209,6 +233,18 @@ function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.
 function openSignup(){$('modalBackdrop').classList.add('open')}
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{selectedMode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));$('marriageFilter').value=selectedMode;renderProfiles()}));
+document.querySelectorAll('.home-category-card').forEach(card=>card.addEventListener('click',()=>{
+ const action=card.dataset.homeAction;
+ if(action==='home'){showPage('homePage');return}
+ if(action==='matchmakers'){showPage('matchmakersPage');return}
+ if(action==='profile'){showPage('profilePage');return}
+ showPage('homePage');
+ const type=action==='announced'?'معلن':action==='misyar'?'مسيار':'الكل';
+ selectedMode=type;$('marriageFilter').value=type;
+ document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode===type));
+ renderProfiles();
+ $('profileGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}));
 ['searchInput','marriageFilter','countryFilter'].forEach(id=>$(id).addEventListener('input',renderProfiles));
 $('topJoin').addEventListener('click',openSignup);$('heroJoin').addEventListener('click',openSignup);$('browseBtn').addEventListener('click',()=>$('profileGrid').scrollIntoView({behavior:'smooth',block:'start'}));$('seeAll').addEventListener('click',()=>{selectedMode='الكل';$('marriageFilter').value='الكل';$('countryFilter').value='الكل';$('searchInput').value='';document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x.dataset.mode==='الكل'));renderProfiles()});
 $('matchmakerProfileBtn').addEventListener('click',()=>showPage('profilePage'));
