@@ -433,6 +433,13 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
   const inviteInput=$('manageressInviteCode');
   const termsField=$('termsCheck')?.closest('.field');
   const submit=form.querySelector('button[type="submit"]');
+  const signupStatus=document.createElement('div');
+  signupStatus.id='signupFlowStatus';
+  signupStatus.className='hint';
+  signupStatus.style.cssText='display:none;margin:12px 0 0;padding:13px 15px;border:1px solid var(--gold);border-radius:13px;background:var(--surface2);line-height:1.9';
+  form.insertAdjacentElement('afterend',signupStatus);
+  function showSignupStatus(message){signupStatus.textContent=message;signupStatus.style.display='block'}
+  function clearSignupStatus(){signupStatus.textContent='';signupStatus.style.display='none'}
   let mode='signup',otpSent=false;
   const switcher=document.createElement('button');
   switcher.type='button';switcher.className='text-btn';switcher.style.cssText='display:block;width:100%;margin-top:14px;padding:10px';
@@ -461,9 +468,9 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
     const otp=$('signupOtp');if(otp)otp.required=phone&&otpSent;
     submit.textContent=mode==='reset'?'إرسال رابط الاستعادة':mode==='recovery'?'حفظ كلمة المرور الجديدة':mode==='login'?(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز الجوال'):'تسجيل الدخول'):(phone?(otpSent?'تأكيد رمز الجوال':'إرسال رمز التحقق'):'إنشاء حساب');
   }
-  function open(){mode='login';otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync();modal.classList.add('open')}
+  function open(){mode='login';otpSent=false;clearSignupStatus();if($('signupOtp'))$('signupOtp').value='';sync();modal.classList.add('open')}
   window.openSignup=open;
-  switcher.addEventListener('click',()=>{mode=mode==='signup'?'login':'signup';otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync()});
+  switcher.addEventListener('click',()=>{mode=mode==='signup'?'login':'signup';otpSent=false;clearSignupStatus();if($('signupOtp'))$('signupOtp').value='';sync()});
   reset.addEventListener('click',()=>{mode='reset';otpSent=false;sync()});
   method?.addEventListener('change',()=>{otpSent=false;if($('signupOtp'))$('signupOtp').value='';sync()});
   form.addEventListener('submit',async e=>{
@@ -503,9 +510,19 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
       }
       const submittedMode=mode;
       const address=email.value.trim(),secret=password.value;
-      const result=submittedMode==='login'?await supabaseClient.auth.signInWithPassword({email:address,password:secret}):await supabaseClient.auth.signUp({email:address,password:secret,options:{data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
+      const result=submittedMode==='login'
+        ?await supabaseClient.auth.signInWithPassword({email:address,password:secret})
+        :await supabaseClient.auth.signUp({email:address,password:secret,options:{emailRedirectTo:window.location.origin,data:{gender:$('signupGender').value,full_name:$('signupDisplayName').value.trim()}}});
       if(result.error)throw result.error;
-      if(submittedMode==='signup'&&!result.data.session){toast('لم يتم فتح جلسة بعد. إذا كان هذا البريد مسجلًا من قبل، انتقل إلى تسجيل الدخول واستخدم كلمة المرور نفسها.');mode='login';sync();return}
+      if(submittedMode==='signup'&&!result.data.session){
+        const createdUser=result.data.user;
+        if(createdUser&&Array.isArray(createdUser.identities)&&createdUser.identities.length===0){
+          throw new Error('هذا البريد مسجل بالفعل. اختر «تسجيل الدخول» واستخدم كلمة المرور التي أنشأت بها الحساب.');
+        }
+        showSignupStatus('تم استلام طلب إنشاء الحساب. إذا كان تأكيد البريد مفعّلًا، افتح رسالة ميثاق في بريدك الإلكتروني واضغط رابط التأكيد، ثم ارجع إلى الموقع وسجّل الدخول. افحص مجلد الرسائل غير المرغوب فيها أيضًا.');
+        toast('تم إرسال طلب التسجيل. تحقق من بريدك الإلكتروني.');
+        return;
+      }
       if(submittedMode==='signup'&&$('manageressInviteCode')?.value.trim()){
         const {data:activation,error:activationError}=await supabaseClient.functions.invoke('activate-manageress',{body:{code:$('manageressInviteCode').value.trim()}});
         if(activationError)throw activationError;if(!activation?.success)throw new Error(activation?.error||'تعذر تفعيل صلاحيات المديرة.');
@@ -515,7 +532,13 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
       if(currentUserGender&&$('profileGender'))$('profileGender').value=currentUserGender;
       let isAdmin=false;if(submittedMode==='login'){const {error:adminRoleError}=await supabaseClient.rpc('admin_dashboard_stats');isAdmin=!adminRoleError;}
       modal.classList.remove('open');toast(isAdmin?'مرحبًا بك في إدارة ميثاق.':submittedMode==='signup'?'تم إنشاء حسابك بنجاح.':'تم تسجيل الدخول بنجاح.');showPage(isAdmin?'adminPage':'homePage');if(isAdmin)await window.adminRefresh?.();else await renderProfiles();
-    }catch(err){console.error('Account flow failed:',err);toast(err.message||'تعذر إكمال العملية. تحقق من البيانات والإعدادات.')}finally{submit.disabled=false}
+    }catch(err){
+      console.error('Account flow failed:',err);
+      const code=String(err.code||'');
+      const message=code==='email_not_confirmed'?'أكد بريدك الإلكتروني من رسالة ميثاق قبل تسجيل الدخول.':code==='invalid_credentials'?'البريد الإلكتروني أو كلمة المرور غير صحيحة.':code==='user_already_exists'?'هذا البريد مسجل بالفعل. اختر تسجيل الدخول.':(err.message||'تعذر إكمال العملية. تحقق من البيانات والإعدادات.');
+      showSignupStatus(message);
+      toast(message);
+    }finally{submit.disabled=false}
   },true);
   const topJoin=$('topJoin');
   if(topJoin){const replacement=topJoin.cloneNode(true);topJoin.replaceWith(replacement);replacement.addEventListener('click',async()=>{const {data:{user}}=await supabaseClient.auth.getUser();if(user)showPage('profilePage');else open()})}
