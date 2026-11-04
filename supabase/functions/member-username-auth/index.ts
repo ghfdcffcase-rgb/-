@@ -81,7 +81,10 @@ Deno.serve(async (req: Request) => {
     if (action === "signup" && isRateLimited("signup:" + ip, 5, 60 * 60 * 1000)) {
       return respond({ error: "تم تجاوز عدد محاولات إنشاء الحساب. حاول لاحقًا." }, 429);
     }
-    if (action === "login" && isRateLimited("login:" + ip + ":" + normalizedUsername, 8, 10 * 60 * 1000)) {
+    if (action === "login" && (
+      isRateLimited("login-ip:" + ip, 30, 10 * 60 * 1000) ||
+      isRateLimited("login:" + ip + ":" + normalizedUsername, 8, 10 * 60 * 1000)
+    )) {
       return respond({ error: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا." }, 429);
     }
     if (!validUsername(username) || password.length < 8 || password.length > 128) return respond({ error: genericError }, 401);
