@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.0";
 
 const allowedOrigins = new Set(["https://mithaq-platform.vercel.app", "https://mithaq-platform-ghfdcffcase-3079.vercel.app"]);
-const baseHeaders = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin","Content-Type":"application/json"};
+const baseHeaders = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin","Content-Type":"application/json","Cache-Control":"no-store","Pragma":"no-cache"};
 const genericError = "اسم المستخدم أو كلمة المرور غير صحيحة.";
 const attempts = new Map<string, { count: number; reset: number }>();
 
