@@ -67,9 +67,9 @@ Deno.serve(async (req: Request) => {
       }
       const username = String(body.username || "").trim().normalize("NFC");
       if (!validUsername(username)) return respond({ error: "اسم المستخدم من 3 إلى 30 حرفًا، ويقبل الحروف والأرقام و _ . -" }, 400);
-      const { data: reserved, error: reservedError } = await admin.from("admin_users").select("user_id").in("role", ["manager", "manageress"]).eq("username", username).limit(1).maybeSingle();
+      const { data: reservedRows, error: reservedError } = await admin.from("admin_users").select("username").in("role", ["manager", "manageress"]);
       if (reservedError) return respond({ error: "تعذر التحقق من اسم المستخدم." }, 500);
-      if (reserved) return respond({ error: "اسم المستخدم محجوز لحساب الإدارة." }, 409);
+      if ((reservedRows || []).some((row) => String(row.username || "").toLowerCase() === username.toLowerCase())) return respond({ error: "اسم المستخدم محجوز لحساب الإدارة." }, 409);
       const { error } = await admin.from("member_usernames").upsert(
         { user_id: auth.user.id, username, updated_at: new Date().toISOString() },
         { onConflict: "user_id" },
@@ -95,9 +95,9 @@ Deno.serve(async (req: Request) => {
     if (!validUsername(username) || password.length < 8 || password.length > 128) return respond({ error: genericError }, 401);
 
     if (action === "signup") {
-      const { data: reserved, error: reservedError } = await admin.from("admin_users").select("user_id").in("role", ["manager", "manageress"]).eq("username", username).limit(1).maybeSingle();
+      const { data: reservedRows, error: reservedError } = await admin.from("admin_users").select("username").in("role", ["manager", "manageress"]);
       if (reservedError) return respond({ error: "تعذر التحقق من اسم المستخدم." }, 500);
-      if (reserved) return respond({ error: "اسم المستخدم محجوز لحساب الإدارة." }, 409);
+      if ((reservedRows || []).some((row) => String(row.username || "").toLowerCase() === username.toLowerCase())) return respond({ error: "اسم المستخدم محجوز لحساب الإدارة." }, 409);
       const email = `member-${crypto.randomUUID()}@mithaq.invalid`;
       const { data: created, error: createError } = await admin.auth.admin.createUser({
         email, password, email_confirm: true,
