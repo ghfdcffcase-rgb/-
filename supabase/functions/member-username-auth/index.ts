@@ -8,59 +8,58 @@ const headers = {
   "Vary": "Origin",
   "Content-Type": "application/json",
 };
-let activeHeaders = headers;
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: activeHeaders });
 const genericError = "اسم المستخدم أو كلمة المرور غير صحيحة.";
 const validUsername = (value: string) =>
   value.length >= 3 && value.length <= 30 &&
   /^[\p{L}\p{N}_][\p{L}\p{N}_.-]*$/u.test(value);
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: responseHeaders });
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const origin = req.headers.get("origin");
-  if (origin && !allowedOrigins.has(origin)) return json({ error: "Origin not allowed" }, 403);
-  activeHeaders = origin ? { ...headers, "Access-Control-Allow-Origin": origin } : headers;
+  if (origin && !allowedOrigins.has(origin)) return new Response("Origin not allowed", { status: 403 });
+  const corsHeaders = origin ? { ...headers, "Access-Control-Allow-Origin": origin } : headers;
+  const respond = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") return respond({ error: "Method not allowed" }, 405);
 
   try {
     const url = Deno.env.get("SUPABASE_URL");
     const anon = Deno.env.get("SUPABASE_ANON_KEY");
     const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (!url || !anon || !service) return json({ error: "الخدمة غير مهيأة على الخادم." }, 500);
+    if (!url || !anon || !service) return respond({ error: "الخدمة غير مهيأة على الخادم." }, 500);
     const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
     const body = await req.json().catch(() => ({}));
     const action = String(body.action || "login");
 
     if (action === "get_username" || action === "set_username") {
       const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-      if (!token) return json({ error: "سجّل الدخول أولًا." }, 401);
+      if (!token) return respond({ error: "سجّل الدخول أولًا." }, 401);
       const userClient = createClient(url, anon, {
         global: { headers: { Authorization: `Bearer ${token}` } },
         auth: { persistSession: false, autoRefreshToken: false },
       });
       const { data: auth, error: authError } = await userClient.auth.getUser(token);
-      if (authError || !auth.user) return json({ error: "جلسة الدخول غير صالحة." }, 401);
+      if (authError || !auth.user) return respond({ error: "جلسة الدخول غير صالحة." }, 401);
       if (action === "get_username") {
         const { data: current, error: readError } = await admin.from("member_usernames")
           .select("username").eq("user_id", auth.user.id).maybeSingle();
-        if (readError) return json({ error: "تعذر قراءة اسم المستخدم." }, 500);
-        return json({ username: current?.username || "" });
+        if (readError) return respond({ error: "تعذر قراءة اسم المستخدم." }, 500);
+        return respond({ username: current?.username || "" });
       }
       const username = String(body.username || "").trim().normalize("NFC");
-      if (!validUsername(username)) return json({ error: "اسم المستخدم من 3 إلى 30 حرفًا، ويقبل الحروف والأرقام و _ . -" }, 400);
+      if (!validUsername(username)) return respond({ error: "اسم المستخدم من 3 إلى 30 حرفًا، ويقبل الحروف والأرقام و _ . -" }, 400);
       const { error } = await admin.from("member_usernames").upsert(
         { user_id: auth.user.id, username, updated_at: new Date().toISOString() },
         { onConflict: "user_id" },
       );
-      if (error?.code === "23505") return json({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
-      if (error) return json({ error: "تعذر حفظ اسم المستخدم." }, 500);
-      return json({ success: true, username });
+      if (error?.code === "23505") return respond({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
+      if (error) return respond({ error: "تعذر حفظ اسم المستخدم." }, 500);
+      return respond({ success: true, username });
     }
 
     const username = String(body.username || "").trim().normalize("NFC");
     const password = String(body.password || "");
     if (!validUsername(username) || password.length < 8 || password.length > 128) {
-      return json({ error: genericError }, 401);
+      return respond({ error: genericError }, 401);
     }
 
     if (action === "signup") {
@@ -73,23 +72,23 @@ Deno.serve(async (req: Request) => {
           auth_method: "username",
         },
       });
-      if (createError || !created.user) return json({ error: "تعذر إنشاء الحساب. تحقق من البيانات وحاول مجددًا." }, 400);
+      if (createError || !created.user) return respond({ error: "تعذر إنشاء الحساب. تحقق من البيانات وحاول مجددًا." }, 400);
       const { error: insertError } = await admin.from("member_usernames").insert({
         user_id: created.user.id, username,
       });
       if (insertError) {
         await admin.auth.admin.deleteUser(created.user.id);
-        return json({ error: insertError.code === "23505" ? "اسم المستخدم مستخدم بالفعل." : "تعذر حفظ الحساب." }, insertError.code === "23505" ? 409 : 500);
+        return respond({ error: insertError.code === "23505" ? "اسم المستخدم مستخدم بالفعل." : "تعذر حفظ الحساب." }, insertError.code === "23505" ? 409 : 500);
       }
     } else if (action !== "login") {
-      return json({ error: "طلب غير صالح." }, 400);
+      return respond({ error: "طلب غير صالح." }, 400);
     }
 
     const { data: row, error: lookupError } = await admin.from("member_usernames")
       .select("user_id").eq("username_normalized", username.toLocaleLowerCase()).maybeSingle();
-    if (lookupError || !row) return json({ error: genericError }, 401);
+    if (lookupError || !row) return respond({ error: genericError }, 401);
     const { data: userData, error: userError } = await admin.auth.admin.getUserById(row.user_id);
-    if (userError || !userData.user?.email) return json({ error: genericError }, 401);
+    if (userError || !userData.user?.email) return respond({ error: genericError }, 401);
 
     const response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
       method: "POST",
@@ -98,9 +97,9 @@ Deno.serve(async (req: Request) => {
     });
     const session = await response.json().catch(() => ({}));
     if (!response.ok || !session.access_token || !session.refresh_token) {
-      return json({ error: action === "signup" ? "تم إنشاء الحساب، لكن تعذر بدء الجلسة. حاول تسجيل الدخول." : genericError }, 401);
+      return respond({ error: action === "signup" ? "تم إنشاء الحساب، لكن تعذر بدء الجلسة. حاول تسجيل الدخول." : genericError }, 401);
     }
-    return json({
+    return respond({
       access_token: session.access_token,
       refresh_token: session.refresh_token,
       expires_in: session.expires_in,
@@ -109,6 +108,6 @@ Deno.serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("member-username-auth failed:", error);
-    return json({ error: "تعذر إكمال العملية. حاول مرة أخرى." }, 500);
+    return respond({ error: "تعذر إكمال العملية. حاول مرة أخرى." }, 500);
   }
 });
