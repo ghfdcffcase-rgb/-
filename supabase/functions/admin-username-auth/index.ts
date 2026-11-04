@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
       if (action === "get_username") return json({ username: role.username || "" });
       const username = String(body.username || "").trim().normalize("NFC");
       if (username.length < 2 || username.length > 40 || !/^[\p{L}\p{N} _.-]+$/u.test(username)) return json({ error: "اسم المستخدم يجب أن يكون من 2 إلى 40 حرفًا." }, 400);
-      const { data: existing } = await admin.from("admin_users").select("user_id").ilike("username", username).limit(1).maybeSingle();
+      const { data: existing } = await admin.from("admin_users").select("user_id").eq("username", username).limit(1).maybeSingle();
       if (existing && existing.user_id !== auth.user.id) return json({ error: "اسم المستخدم مستخدم بالفعل." }, 409);
       const { error } = await admin.from("admin_users").update({ username }).eq("user_id", auth.user.id);
       if (error) return json({ error: "تعذر حفظ اسم المستخدم." }, 500);
@@ -54,7 +54,7 @@ Deno.serve(async (req: Request) => {
     if (!record || record.reset <= now) attempts.set(key, { count: 1, reset: now + 10 * 60 * 1000 });
     else record.count++;
 
-    const { data: row, error: lookupError } = await admin.from("admin_users").select("user_id").ilike("username", username).limit(1).maybeSingle();
+    const { data: row, error: lookupError } = await admin.from("admin_users").select("user_id").eq("username", username).limit(1).maybeSingle();
     if (lookupError || !row) return json({ error: genericError }, 401);
     const { data: userData, error: userError } = await admin.auth.admin.getUserById(row.user_id);
     if (userError || !userData.user?.email) return json({ error: genericError }, 401);
