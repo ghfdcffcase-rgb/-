@@ -16,7 +16,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const authHeader = req.headers.get("Authorization") || "";
-    const token = authHeader.replace(/^Bearer\\s+/i, "");
+    const token = authHeader.replace(/^Bearer\s+/i, "");
     if (!token) return json({ error: "يلزم تسجيل الدخول بحساب المدير." }, 401);
 
     const url = Deno.env.get("SUPABASE_URL");
@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json().catch(() => ({}));
     const email = String(body.email || "").trim().toLowerCase();
-    if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return json({ error: "أدخل بريدًا إلكترونيًا صحيحًا." }, 400);
     }
 
