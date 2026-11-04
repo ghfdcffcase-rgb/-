@@ -75,7 +75,7 @@ Deno.serve(async (req: Request) => {
       return respond({ error: "طلب غير صالح." }, 400);
     }
 
-    const { data: row, error: lookupError } = await admin.from("member_usernames").select("user_id").eq("username_normalized", username.toLocaleLowerCase()).maybeSingle();
+    const { data: row, error: lookupError } = await admin.from("member_usernames").select("user_id").eq("username_normalized", username.toLowerCase()).maybeSingle();
     if (lookupError || !row) return respond({ error: genericError }, 401);
     const { data: userData, error: userError } = await admin.auth.admin.getUserById(row.user_id);
     if (userError || !userData.user?.email) return respond({ error: genericError }, 401);
