@@ -4,10 +4,10 @@ import vm from "node:vm";
 
 const root = process.cwd();
 const failures = [];
-const check = (ok, message) => {
+function check(ok, message) {
   if (!ok) failures.push(message);
   else console.log("PASS", message);
-};
+}
 
 const htmlPath = join(root, "index.html");
 check(existsSync(htmlPath), "index.html exists");
@@ -18,24 +18,25 @@ if (existsSync(htmlPath)) {
     "audioPage", "audioStart", "audioGuestButton", "audioRoomsList",
   ];
   for (const id of requiredIds) {
-    check(new RegExp('\\bid=["\\']' + id + '["\\']').test(html), \`required UI element #\${id} exists\`);
+    check(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"),
+      "required UI element #" + id + " exists");
   }
 
   const inlineScripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
-    .filter(([, attrs]) => !/\bsrc\s*=/.test(attrs))
-    .map(([, attrs, source], index) => ({ attrs, source, index }));
+    .filter((match) => !/\bsrc\s*=/.test(match[1]))
+    .map((match, index) => ({ source: match[2], index }));
   check(inlineScripts.length > 0, "inline application scripts are present");
 
   for (const script of inlineScripts) {
     try {
-      new vm.Script(script.source, { filename: \`index.html:inline-script-\${script.index + 1}\` });
-      console.log("PASS", \`inline script \${script.index + 1} parses\`);
+      new vm.Script(script.source, { filename: "index.html:inline-script-" + (script.index + 1) });
+      console.log("PASS", "inline script " + (script.index + 1) + " parses");
     } catch (error) {
-      failures.push(\`inline script \${script.index + 1} syntax error: \${error.message}\`);
+      failures.push("inline script " + (script.index + 1) + " syntax error: " + error.message);
     }
   }
 
-  check(!/service_role_[A-Za-z0-9_-]{20,}/i.test(html), "no Supabase service-role secret is embedded in the browser HTML");
+  check(!/service_role_[A-Za-z0-9_-]{20,}/i.test(html), "no Supabase service-role secret is embedded in browser HTML");
   check(/auth\.signInWithPassword\(\{email:address,password:secret\}\)/.test(html), "email/password sign-in flow is present");
   check(/functions\.invoke\(['"]mithaq-live-audio['"]/.test(html), "live audio calls the Supabase Edge Function");
   check(/auth\.getSession\(\)/.test(html), "client checks for a valid auth session");
@@ -48,8 +49,9 @@ if (existsSync(migrationDir)) {
   for (const name of migrations) {
     const sql = readFileSync(join(migrationDir, name), "utf8");
     if (/member_usernames/i.test(sql)) {
-      check(/enable row level security/i.test(sql), \`\${name}: member usernames has RLS enabled\`);
-      check(/revoke all on public\.member_usernames from anon, authenticated/i.test(sql), \`\${name}: member usernames is not directly exposed to browser roles\`);
+      check(/enable row level security/i.test(sql), name + ": member usernames has RLS enabled");
+      check(/revoke all on public\.member_usernames from anon, authenticated/i.test(sql),
+        name + ": member usernames is not directly exposed to browser roles");
     }
   }
 } else {
