@@ -492,7 +492,7 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
       const address=email.value.trim();
       if(!address||!email.checkValidity()){showSignupStatus('أدخل بريدًا إلكترونيًا صحيحًا.');toast('أدخل بريدًا إلكترونيًا صحيحًا.');return}
     }
-    if(usernameMode&&!/^[\\p{L}\\p{N}_][\\p{L}\\p{N}_.-]{2,29}$/u.test($('signupUsername').value.trim())){showSignupStatus('اسم المستخدم من 3 إلى 30 حرفًا، دون مسافات.');toast('تحقق من اسم المستخدم.');return}
+    const loginUsername=$('signupUsername').value.trim();const usernameValid=mode==='login'?(loginUsername.length>=2&&loginUsername.length<=40&&/^[\\p{L}\\p{N} _.-]+$/u.test(loginUsername)):/^[\\p{L}\\p{N}_][\\p{L}\\p{N}_.-]{2,29}$/u.test(loginUsername);if(usernameMode&&!usernameValid){showSignupStatus('اسم المستخدم غير صالح.');toast('تحقق من اسم المستخدم.');return}
     if(['signup','login'].includes(mode)&&password.value.length<8){showSignupStatus('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');return}
     if(mode==='signup'&&$('manageressInviteCode')?.value.trim()&&(phoneMode||usernameMode)){toast('تفعيل صلاحيات المديرة يتم من حساب الإدارة المعتمد فقط.');return}
     if(phoneMode){
@@ -956,7 +956,7 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
   panel.id='accountCredentialsPanel';
   panel.className='form-panel';
   panel.style.cssText='margin-top:18px';
-  panel.innerHTML='<div class="section-head"><div><h3>بيانات تسجيل الدخول</h3><p>حدّث اسم المستخدم أو كلمة المرور بأمان</p></div></div><form id="usernameSettingsForm" class="form-grid"><div class="field full"><label for="accountUsername">اسم المستخدم</label><input id="accountUsername" minlength="3" maxlength="30" autocomplete="username" placeholder="3 إلى 30 حرفًا دون مسافات"></div><div class="field full"><button class="ghost" type="submit">حفظ اسم المستخدم</button></div></form><form id="passwordSettingsForm" class="form-grid" style="margin-top:18px"><div class="field full"><label for="accountNewPassword">كلمة المرور الجديدة</label><input id="accountNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8 أحرف على الأقل" required></div><div class="field full"><button class="primary" type="submit">تحديث كلمة المرور</button></div></form><p id="accountCredentialsStatus" class="hint" aria-live="polite"></p>';
+  panel.innerHTML='<div class="section-head"><div><h3>بيانات تسجيل الدخول</h3><p>حدّث اسم المستخدم أو كلمة المرور بأمان</p></div></div><form id="usernameSettingsForm" class="form-grid"><div class="field full"><label for="accountUsername">اسم المستخدم</label><input id="accountUsername" minlength="2" maxlength="40" autocomplete="username" placeholder="اسم من حرفين إلى 40 حرفًا"></div><div class="field full"><button class="ghost" type="submit">حفظ اسم المستخدم</button></div></form><form id="passwordSettingsForm" class="form-grid" style="margin-top:18px"><div class="field full"><label for="accountNewPassword">كلمة المرور الجديدة</label><input id="accountNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8 أحرف على الأقل" required></div><div class="field full"><button class="primary" type="submit">تحديث كلمة المرور</button></div></form><p id="accountCredentialsStatus" class="hint" aria-live="polite"></p>';
   const profileForm=profile.querySelector('.form-panel');
   profileForm?.after(panel);
   const status=panel.querySelector('#accountCredentialsStatus');
