@@ -532,7 +532,13 @@ document.querySelectorAll('.section-head').forEach((head,index)=>{const holder=h
         modal.classList.remove('open');toast('تم إنشاء الحساب والتحقق من الجوال.');showPage('homePage');await renderProfiles();return;
       }
       if(usernameMode){
-        const {data,error}=await supabaseClient.functions.invoke('member-username-auth',{body:{action:mode,username:$('signupUsername').value.trim(),password:password.value,gender:$('signupGender')?.value||'',full_name:$('signupDisplayName')?.value.trim()||''}});
+        let authResult;
+        const usernamePayload={action:mode,username:$('signupUsername').value.trim(),password:password.value,gender:$('signupGender')?.value||'',full_name:$('signupDisplayName')?.value.trim()||''};
+        if(mode==='login'){
+          authResult=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'login',username:usernamePayload.username,password:usernamePayload.password}});
+          if(authResult.error||authResult.data?.error)authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+        }else authResult=await supabaseClient.functions.invoke('member-username-auth',{body:usernamePayload});
+        const {data,error}=authResult;
         if(error)throw error;if(data?.error)throw new Error(data.error);
         const {data:sessionData,error:sessionError}=await supabaseClient.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
         if(sessionError)throw sessionError;if(!sessionData.session)throw new Error('تعذر بدء جلسة الحساب.');
@@ -959,16 +965,18 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
     const {data:{session}}=await supabaseClient.auth.getSession();
     if(!session){panel.hidden=true;return;}
     panel.hidden=false;
-    const {data,error}=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'get_username'}});
-    if(!error&&data?.username)usernameInput.value=data.username;
+    let result=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'get_username'}});
+    if(result.error||result.data?.error)result=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'get_username'}});
+    if(!result.error&&result.data?.username)usernameInput.value=result.data.username;
   };
   panel.querySelector('#usernameSettingsForm').addEventListener('submit',async event=>{
     event.preventDefault();
     const username=usernameInput.value.trim();
-    if(!/^[\\p{L}\\p{N}_][\\p{L}\\p{N}_.-]{2,29}$/u.test(username)){status.textContent='اسم المستخدم من 3 إلى 30 حرفًا، دون مسافات.';return;}
+    if(username.length<2||username.length>40||!/^[\\p{L}\\p{N} _.-]+$/u.test(username)){status.textContent='اسم المستخدم من حرفين إلى 40 حرفًا.';return;}
     const button=event.currentTarget.querySelector('button');button.disabled=true;
-    try{const {data,error}=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'set_username',username}});
-      if(error)throw error;if(data?.error)throw new Error(data.error);status.textContent='تم حفظ اسم المستخدم. يمكنك استخدامه لتسجيل الدخول.';toast('تم تحديث اسم المستخدم.');
+    try{let result=await supabaseClient.functions.invoke('admin-username-auth',{body:{action:'set_username',username}});
+      if(result.error||result.data?.error)result=await supabaseClient.functions.invoke('member-username-auth',{body:{action:'set_username',username}});
+      if(result.error)throw result.error;if(result.data?.error)throw new Error(result.data.error);status.textContent='تم حفظ اسم المستخدم. يمكنك استخدامه لتسجيل الدخول.';toast('تم تحديث اسم المستخدم.');
     }catch(error){status.textContent=error.message||'تعذر تحديث اسم المستخدم.';}
     finally{button.disabled=false;}
   });
