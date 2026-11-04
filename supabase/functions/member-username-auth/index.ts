@@ -7,6 +7,8 @@ const headers = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Vary": "Origin",
   "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+  "Pragma": "no-cache",
 };
 const genericError = "اسم المستخدم أو كلمة المرور غير صحيحة.";
 
