@@ -49,6 +49,11 @@ Deno.serve(async (req: Request) => {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const key = ip + ":" + username.toLowerCase();
     const now = Date.now();
+    if (attempts.size > 5000) {
+      for (const [entryKey, entry] of attempts) {
+        if (entry.reset <= now) attempts.delete(entryKey);
+      }
+    }
     const record = attempts.get(key);
     if (record && record.reset > now && record.count >= 8) return json({ error: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا." }, 429);
     if (!record || record.reset <= now) attempts.set(key, { count: 1, reset: now + 10 * 60 * 1000 });
