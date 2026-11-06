@@ -1009,8 +1009,28 @@ document.querySelectorAll('.bottom-nav .nav-item[data-page]').forEach(button=>{
  let audioRoom=null,audioSdk=null,currentAudioRoomId=null,currentAudioRoomRow=null,audioRefreshBusy=false,audioApprovalTimer=null,audioApprovalBusy=false,audioGuestMicActive=false,audioHostRequestsTimer=null,audioRequestsBusy=false;
  const audioStatusNames={live:'مباشر الآن',paused:'متوقف مؤقتًا',ended:'انتهى'};
  function audioMsg(message){if(typeof toast==='function')toast(message);else console.log(message)}
- async function audioUser(){const {data:{user},error}=await supabaseClient.auth.getUser();if(error)throw error;if(!user)throw new Error('سجّل الدخول أولًا.');return user}
- async function audioInvoke(body){let {data:{session},error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token){const refreshed=await supabaseClient.auth.refreshSession();if(refreshed.error)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');session=refreshed.data.session}if(!session?.access_token)throw new Error('جلسة الدخول غير متاحة. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
+ async function audioSession(){
+   let {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
+   if(sessionError)throw sessionError;
+   if(!session?.access_token){
+     const refreshed=await supabaseClient.auth.refreshSession();
+     if(refreshed.error||!refreshed.data?.session?.access_token)throw new Error('انتهت جلسة الدخول أو لم تُستعد بعد. سجّل الدخول مجددًا ثم أعد المحاولة.');
+     session=refreshed.data.session;
+   }
+   let {data:{user},error:userError}=await supabaseClient.auth.getUser(session.access_token);
+   if(userError||!user){
+     const refreshed=await supabaseClient.auth.refreshSession();
+     if(refreshed.error||!refreshed.data?.session?.access_token)throw new Error('تعذر استعادة جلسة الدخول. سجّل الدخول مجددًا ثم أعد المحاولة.');
+     session=refreshed.data.session;
+     const verified=await supabaseClient.auth.getUser(session.access_token);
+     user=verified.data?.user;
+     userError=verified.error;
+   }
+   if(userError||!user)throw new Error('تعذر التحقق من جلسة الدخول. سجّل الدخول مجددًا قبل استخدام المجلس الصوتي.');
+   return {session,user};
+ }
+ async function audioUser(){const {user}=await audioSession();return user}
+ async function audioInvoke(body){const {session}=await audioSession();const {data,error}=await supabaseClient.functions.invoke('mithaq-live-audio',{body,headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.message||data.error);return data}
  async function audioConnect(roomId,asHost){
    const data=await audioInvoke({action:'token',roomId});
    if(!data?.token||!data?.serverUrl)throw new Error('لم يصل رمز اتصال صالح من خادم البث.');
